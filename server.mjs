@@ -14,6 +14,13 @@ const apiBase = String(
 const proxyToken = String(process.env.PRAMANA_PROXY_TOKEN || "").trim();
 const timeoutMs = Number(process.env.PRAMANA_REQUEST_TIMEOUT_MS || 120000);
 const maxBodyBytes = 24 * 1024;
+const allowedFeedbackTags = new Set([
+  "wrong evidence",
+  "didn't answer",
+  "unsupported conclusion",
+  "hard to understand",
+  "should have abstained",
+]);
 
 const mime = {
   ".html": "text/html; charset=utf-8",
@@ -128,13 +135,23 @@ async function feedback(req, res) {
     return json(res, 422, { error: "Invalid feedback." });
   }
 
+  const tags = Array.isArray(body.tags)
+    ? body.tags
+        .filter((tag) => typeof tag === "string" && allowedFeedbackTags.has(tag))
+        .slice(0, 5)
+    : [];
+  const comment =
+    typeof body.comment === "string" && body.comment.trim()
+      ? body.comment.trim().slice(0, 1000)
+      : null;
+
   const upstream = await callPramana("/v1/mahaperiyava/feedback", {
     method: "POST",
     body: JSON.stringify({
       interaction_id: body.interactionId,
       rating: body.rating,
-      tags: [],
-      comment: null,
+      tags,
+      comment,
     }),
   });
 
