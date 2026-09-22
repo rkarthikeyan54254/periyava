@@ -1,0 +1,16 @@
+{
+  "name": "just-periyava",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A calm evidence-grounded product shell over Pramāṇa's Mahaperiyava service.",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test",
+    "smoke": "node scripts/smoke-backend.mjs",
+    "check": "node --check server.mjs && node --check public/app.js && node --check lib/public-answer.mjs && node --check netlify/lib/proxy.mjs && node --check netlify/functions/answer.mjs && node --check netlify/functions/feedback.mjs && node --check netlify/functions/health.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
