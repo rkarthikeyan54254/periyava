@@ -5,6 +5,7 @@ const examplePrompts = [
   "What did Periyava say about the unity of Shiva and Vishnu?",
   "What did Periyava say about Sandhyavandanam?",
   "What did Periyava say about a student's duties and education?",
+  "சிவனும் விஷ்ணுவும் ஒன்றா?",
 ];
 
 const topics = [
@@ -16,6 +17,14 @@ const topics = [
   ["Tamil & Sanskrit", "What did Periyava say about Tamil and Sanskrit?"],
 ];
 
+const feedbackTags = [
+  "wrong evidence",
+  "didn't answer",
+  "unsupported conclusion",
+  "hard to understand",
+  "should have abstained",
+];
+
 const state = {
   route: readRoute(),
   question: "",
@@ -23,6 +32,7 @@ const state = {
   loading: false,
   error: null,
   feedback: null,
+  feedbackMode: null,
 };
 
 function escapeHtml(value = "") {
@@ -112,6 +122,7 @@ function askPage() {
       <p>We will bring back only what the curated evidence can support.</p>
     </section>
     ${composer()}
+    <p class="quality-note">Questions and optional feedback may be retained for quality review. They never become source evidence.</p>
     <section class="answer-zone">
       ${state.loading ? loadingCard() : state.error ? errorCard() : state.answer ? answerCard(state.answer) : emptyCard()}
     </section>
@@ -190,9 +201,22 @@ function answerFooter(answer) {
         <div class="feedback">
           <span>Was this useful?</span>
           <button type="button" data-rating="up">Yes</button>
-          <button type="button" data-rating="down">Not quite</button>
+          <button type="button" id="show-feedback-review">Needs review</button>
           ${state.feedback ? `<em>${escapeHtml(state.feedback)}</em>` : ""}
         </div>
+        ${state.feedbackMode === "review" && !state.feedback ? `
+          <div class="feedback-review">
+            <strong>What should we review?</strong>
+            <div class="feedback-tags">
+              ${feedbackTags.map((tag) => `<label><input type="checkbox" value="${escapeHtml(tag)}"> <span>${escapeHtml(tag)}</span></label>`).join("")}
+            </div>
+            <label class="feedback-comment">
+              <span>Optional note</span>
+              <textarea id="feedback-comment" maxlength="1000" rows="3" placeholder="Tell us what felt wrong or incomplete."></textarea>
+            </label>
+            <button type="button" class="primary feedback-submit" id="send-feedback-review">Send review</button>
+          </div>
+        ` : ""}
       ` : ""}
     </footer>
   `;
@@ -268,6 +292,7 @@ function render() {
       state.answer = null;
       state.error = null;
       state.feedback = null;
+      state.feedbackMode = null;
       go("ask");
     });
   });
@@ -286,6 +311,23 @@ function render() {
   app.querySelectorAll("[data-rating]").forEach((button) => {
     button.addEventListener("click", () => sendFeedback(button.dataset.rating));
   });
+
+  const reviewButton = app.querySelector("#show-feedback-review");
+  if (reviewButton) {
+    reviewButton.addEventListener("click", () => {
+      state.feedbackMode = "review";
+      render();
+    });
+  }
+
+  const reviewSubmit = app.querySelector("#send-feedback-review");
+  if (reviewSubmit) {
+    reviewSubmit.addEventListener("click", () => {
+      const tags = [...app.querySelectorAll(".feedback-tags input:checked")].map((input) => input.value);
+      const comment = app.querySelector("#feedback-comment")?.value?.trim() || null;
+      sendFeedback("down", tags, comment);
+    });
+  }
 
   app.querySelectorAll("[data-reopen]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -308,6 +350,7 @@ async function submitQuestion(event) {
   state.error = null;
   state.answer = null;
   state.feedback = null;
+  state.feedbackMode = null;
   history.replaceState(null, "", "#ask");
   render();
 
@@ -329,7 +372,7 @@ async function submitQuestion(event) {
   }
 }
 
-async function sendFeedback(rating) {
+async function sendFeedback(rating, tags = [], comment = null) {
   if (!state.answer?.interactionId || state.feedback) return;
 
   try {
@@ -339,9 +382,14 @@ async function sendFeedback(rating) {
       body: JSON.stringify({
         interactionId: state.answer.interactionId,
         rating,
+        tags,
+        comment,
       }),
     });
-    state.feedback = response.ok ? "Thank you." : "Feedback could not be saved.";
+    state.feedback = response.ok
+      ? (rating === "down" ? "Thank you — this is in the quality review queue." : "Thank you.")
+      : "Feedback could not be saved.";
+    state.feedbackMode = null;
   } catch {
     state.feedback = "Feedback could not be saved.";
   }
