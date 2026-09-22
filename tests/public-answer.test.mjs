@@ -55,6 +55,41 @@ test("validated grounded synthesis is preferred over citation-style fallback", (
   assert.equal(serialized.includes("validated_grounded_synthesis"), false);
 });
 
+test("qualified packet may surface validated synthesis with its boundary inside the prose", () => {
+  const out = toPublicAnswer({
+    interaction_id: "qualified-synthesis",
+    query: "Can women perform Sandhyavandanam?",
+    answerable: true,
+    answer: {
+      display_text: "Deterministic boundary.",
+      evidence_sufficiency: {
+        limitation: "The retrieved evidence does not establish permission.",
+      },
+      presentation: {
+        kind: "validated_grounded_synthesis",
+        text: "The documented teaching explains the importance of Sandhyavandanam, but the records available here do not establish whether the group named in the question may perform it.",
+        claims: [{
+          text: "Sandhyavandanam is treated as an important daily observance.",
+          support_ids: ["s1"],
+        }],
+      },
+    },
+    claims: [{
+      text: "Sandhyavandanam is treated as an important daily observance.",
+      source_label: "Deivathin Kural — Vol. 2",
+      support_ids: ["s1"],
+    }],
+    policy: { question_evidence_sufficiency: "qualified" },
+  });
+
+  assert.equal(out.state, "qualified");
+  assert.match(out.answerText, /do not establish/);
+  assert.equal(out.limitation, null);
+  assert.equal(out.teachings[0].text, "Sandhyavandanam is treated as an important daily observance.");
+  assert.equal(out.teachings[0].sourceLabel, "Deivathin Kural — Vol. 2");
+  assert.equal(JSON.stringify(out).includes("s1"), false);
+});
+
 test("qualified packet exposes the limitation separately", () => {
   const packet = {
     interaction_id: "qualified123",
