@@ -54,3 +54,18 @@ The smoke test sends a real question through the Pramāṇa answer endpoint, val
 Just Periyava does not log question text in this product service. Questions are sent to Pramāṇa for evidence lookup; the existing controlled beta ledger policy remains authoritative on the backend.
 
 The UI explicitly describes answers as an **evidence-based curated representation of documented teachings**, not Mahaperiyava literally speaking through AI.
+
+## Deployment continuity
+
+The canonical consumer code lives here, while the evidence system remains in the private Pramāṇa repository.
+
+The preferred production topology reuses the infrastructure that already exists:
+
+- **Netlify site:** `pramana-mahaperiyava-beta` remains the user-facing host.
+- **Railway project:** `pramana-beta` remains the backend project.
+- **Railway service:** `mahaperiyava-api` remains the authoritative Mahaperiyava API.
+- The dormant `mahaperiyava-api-live` service is not required for the frontend and should not be treated as a fresh replacement stack.
+- Existing Netlify environment names are supported: `PRAMANA_API_BASE_URL` plus either `PRAMANA_PROXY_TOKEN` or the legacy `PRAMANA_BACKEND_TOKEN`.
+- Legacy Netlify API paths `/v1/mahaperiyava/answer` and `/v1/mahaperiyava/feedback` are retained as compatibility rewrites to the new same-origin `/api/*` surface.
+
+This lets the existing Netlify project be repointed to this repository without creating another site and without exposing the Pramāṇa backend credential to the browser.
