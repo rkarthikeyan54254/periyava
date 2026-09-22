@@ -113,3 +113,13 @@ nav button.active{color:var(--accent);background:rgba(115,63,60,.06)}
 .feedback{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:15px;color:var(--muted);font-size:11px}
 .feedback button{padding:6px 9px;cursor:pointer}
 .feedback em{font-style:normal;color:var(--accent)}
+
+.quality-note{margin:10px 5px 0;color:var(--faint);font-size:10px;line-height:1.5}
+.feedback-review{margin-top:13px;padding:14px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.35)}
+.feedback-review>strong{display:block;font-family:var(--serif);font-weight:400;font-size:15px;margin-bottom:10px}
+.feedback-tags{display:flex;flex-wrap:wrap;gap:7px}
+.feedback-tags label{display:flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:6px 9px;color:var(--muted);font-size:10px;cursor:pointer}
+.feedback-tags input{accent-color:var(--accent)}
+.feedback-comment{display:grid;gap:6px;margin-top:12px;color:var(--muted);font-size:10px}
+.feedback-comment textarea{width:100%;resize:vertical;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.5);color:var(--ink);padding:10px;line-height:1.45}
+.feedback-submit{margin-top:10px;min-height:37px;font-size:11px}
