@@ -1,0 +1,68 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { deriveState, toPublicAnswer } from "../lib/public-answer.mjs";
+
+test("supported packet exposes only curated public fields", () => {
+  const packet = {
+    interaction_id: "abc123456789",
+    query: "What did Periyava say?",
+    answerable: true,
+    answer: { display_text: "A grounded answer." },
+    claims: [{
+      text: "A documented teaching.",
+      source_label: "Deivathin Kural — Vol. 1, Chapter 2",
+      support_ids: ["private.id"],
+    }],
+    evidence: [{ score: 0.99, restricted_text: "never expose" }],
+    generation_request: { secret: true },
+    policy: { question_evidence_sufficiency: "supported" },
+  };
+
+  const out = toPublicAnswer(packet);
+  assert.equal(out.state, "supported");
+  assert.equal(out.answerText, "A grounded answer.");
+  assert.deepEqual(out.references, ["Deivathin Kural — Vol. 1, Chapter 2"]);
+  const serialized = JSON.stringify(out);
+  assert.equal(serialized.includes("support_ids"), false);
+  assert.equal(serialized.includes("restricted_text"), false);
+  assert.equal(serialized.includes("generation_request"), false);
+});
+
+test("qualified packet exposes the limitation separately", () => {
+  const packet = {
+    interaction_id: "qualified123",
+    query: "May a named group perform a practice?",
+    answerable: true,
+    answer: {
+      display_text: "Combined rendering",
+      evidence_sufficiency: {
+        limitation: "The retrieved evidence discusses the practice, but does not directly establish permission.",
+      },
+    },
+    claims: [{
+      text: "The related documented teaching.",
+      source_label: "Deivathin Kural — Vol. 2, Chapter 8",
+    }],
+    policy: { question_evidence_sufficiency: "qualified" },
+  };
+
+  const out = toPublicAnswer(packet);
+  assert.equal(deriveState(packet), "qualified");
+  assert.equal(out.answerText, null);
+  assert.match(out.limitation, /does not directly establish/);
+  assert.equal(out.teachings[0].text, "The related documented teaching.");
+});
+
+test("abstention is a corpus limitation, not a historical claim", () => {
+  const out = toPublicAnswer({
+    interaction_id: "abstain123",
+    query: "Unsupported modern question",
+    answerable: false,
+    status: "insufficient_evidence",
+  });
+
+  assert.equal(out.state, "abstain");
+  assert.match(out.message, /do not currently have sufficiently strong evidence/);
+  assert.match(out.corpusBoundary, /not a claim that Mahaperiyava never spoke/);
+  assert.deepEqual(out.teachings, []);
+});
