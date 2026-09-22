@@ -1,5 +1,13 @@
 import { toPublicAnswer } from "../../lib/public-answer.mjs";
 
+const ALLOWED_FEEDBACK_TAGS = new Set([
+  "wrong evidence",
+  "didn't answer",
+  "unsupported conclusion",
+  "hard to understand",
+  "should have abstained",
+]);
+
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
   "cache-control": "no-store",
@@ -143,13 +151,23 @@ export async function feedback(request) {
       return json(422, { error: "Invalid feedback." });
     }
 
+    const tags = Array.isArray(body.tags)
+      ? body.tags
+          .filter((tag) => typeof tag === "string" && ALLOWED_FEEDBACK_TAGS.has(tag))
+          .slice(0, 5)
+      : [];
+    const comment =
+      typeof body.comment === "string" && body.comment.trim()
+        ? body.comment.trim().slice(0, 1000)
+        : null;
+
     const upstream = await callPramana("/v1/mahaperiyava/feedback", {
       method: "POST",
       body: JSON.stringify({
         interaction_id: body.interactionId,
         rating: body.rating,
-        tags: [],
-        comment: null,
+        tags,
+        comment,
       }),
     });
 
