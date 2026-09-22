@@ -16,6 +16,8 @@ test("Netlify adapter reuses legacy backend token and preserves public DTO", asy
 
   globalThis.fetch = async (_url, options) => {
     assert.equal(options.headers["x-pramana-proxy-token"], "legacy-token");
+    const forwarded = JSON.parse(options.body);
+    assert.equal(forwarded.response_language, "ta");
     return new Response(JSON.stringify({
       interaction_id: "i-1",
       query: "What did Periyava say?",
@@ -54,7 +56,10 @@ test("Netlify adapter reuses legacy backend token and preserves public DTO", asy
   const response = await answer(new Request("https://site.example/api/answer", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ question: "What did Periyava say?" }),
+    body: JSON.stringify({
+      question: "What did Periyava say?",
+      responseLanguage: "ta",
+    }),
   }));
 
   assert.equal(response.status, 200);

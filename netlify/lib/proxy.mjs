@@ -106,6 +106,9 @@ export async function answer(request) {
   try {
     const body = await readJson(request);
     const question = typeof body.question === "string" ? body.question.trim() : "";
+    const responseLanguage = ["en", "ta"].includes(body.responseLanguage)
+      ? body.responseLanguage
+      : null;
     if (!question || question.length > 2000) {
       return json(422, {
         error: "Please enter a question between 1 and 2,000 characters.",
@@ -114,7 +117,11 @@ export async function answer(request) {
 
     const upstream = await callPramana("/v1/mahaperiyava/answer", {
       method: "POST",
-      body: JSON.stringify({ query: question, top_k: 8 }),
+      body: JSON.stringify({
+        query: question,
+        top_k: 8,
+        ...(responseLanguage ? { response_language: responseLanguage } : {}),
+      }),
     });
     const packet = await upstream.json().catch(() => ({}));
 

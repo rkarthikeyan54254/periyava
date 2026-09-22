@@ -129,3 +129,18 @@ nav button.active{color:var(--accent);background:rgba(115,63,60,.06)}
 .evidence-details .teachings{border-top:0;margin-top:10px}
 .trust-details{margin-top:0}
 .trust-details p{margin:9px 0 0;color:var(--faint);font-size:11px;line-height:1.55}
+
+header{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.language-tabs{display:flex;align-items:center;padding:3px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.45);flex:0 0 auto}
+.language-tabs button{border:0;background:transparent;border-radius:999px;padding:7px 11px;color:var(--muted);font-size:11px;cursor:pointer}
+.language-tabs button.active{background:var(--accent);color:#fffaf5}
+html[lang="ta"] .hero h1,html[lang="ta"] .page-head h1{letter-spacing:0;line-height:1.16}
+html[lang="ta"] .hero h1{font-size:clamp(38px,9vw,58px)}
+html[lang="ta"] .lead,html[lang="ta"] .page-head>p,html[lang="ta"] .prose,html[lang="ta"] .teachings p{line-height:1.82}
+html[lang="ta"] .eyebrow{text-transform:none;letter-spacing:.04em}
+html[lang="ta"] nav button{text-transform:none;font-size:10px}
+@media(max-width:520px){
+  header{align-items:flex-start}
+  .brand small{max-width:190px;line-height:1.35}
+  .language-tabs button{padding:7px 9px}
+}
