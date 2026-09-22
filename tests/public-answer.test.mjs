@@ -28,6 +28,33 @@ test("supported packet exposes only curated public fields", () => {
   assert.equal(serialized.includes("generation_request"), false);
 });
 
+test("validated grounded synthesis is preferred over citation-style fallback", () => {
+  const out = toPublicAnswer({
+    interaction_id: "synthesis123",
+    query: "What did Periyava say about Sandhyavandanam?",
+    answerable: true,
+    answer: {
+      display_text: "Citation-like fallback.",
+      presentation: {
+        kind: "validated_grounded_synthesis",
+        text: "Mahaperiyava’s teaching places Sandhyavandanam within a disciplined daily spiritual life.",
+      },
+    },
+    claims: [{
+      text: "Daily Sandhya is associated with purification and collective welfare.",
+      source_label: "Deivathin Kural — Vol. 2",
+      support_ids: ["private.id"],
+    }],
+    policy: { question_evidence_sufficiency: "supported" },
+  });
+
+  assert.equal(out.state, "supported");
+  assert.match(out.answerText, /disciplined daily spiritual life/);
+  const serialized = JSON.stringify(out);
+  assert.equal(serialized.includes("private.id"), false);
+  assert.equal(serialized.includes("validated_grounded_synthesis"), false);
+});
+
 test("qualified packet exposes the limitation separately", () => {
   const packet = {
     interaction_id: "qualified123",
@@ -62,7 +89,7 @@ test("abstention is a corpus limitation, not a historical claim", () => {
   });
 
   assert.equal(out.state, "abstain");
-  assert.match(out.message, /do not currently have sufficiently strong evidence/);
+  assert.match(out.message, /sources we have verified do not yet support/);
   assert.match(out.corpusBoundary, /not a claim that Mahaperiyava never spoke/);
   assert.deepEqual(out.teachings, []);
 });
