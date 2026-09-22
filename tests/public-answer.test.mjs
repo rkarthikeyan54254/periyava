@@ -90,6 +90,6 @@ test("abstention is a corpus limitation, not a historical claim", () => {
 
   assert.equal(out.state, "abstain");
   assert.match(out.message, /sources we have verified do not yet support/);
-  assert.match(out.corpusBoundary, /not a claim that Mahaperiyava never spoke/);
+  assert.match(out.corpusBoundary, /not a claim that Sri Mahaperiyava never spoke/);
   assert.deepEqual(out.teachings, []);
 });
