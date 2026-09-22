@@ -84,7 +84,7 @@ function composer() {
           </select>
         </div>
         <button type="submit" class="primary" ${state.loading ? "disabled" : ""}>
-          ${state.loading ? "Checking evidence…" : "Ask Periyava"}
+          ${state.loading ? "Consulting the teachings…" : "Seek guidance"}
         </button>
       </div>
       <small class="dictation-note">Dictation remains editable and never submits on its own.</small>
@@ -95,21 +95,21 @@ function composer() {
 function homePage() {
   return `
     <section class="hero">
-      <p class="eyebrow">A question. A documented teaching. A clear boundary.</p>
-      <h1>What did Periyava say?</h1>
-      <p class="lead">Ask naturally. Just Periyava looks only for evidence we can responsibly attribute.</p>
+      <p class="eyebrow">ஸ்ரீ மஹாபெரியவா அருளுரை · documented teachings</p>
+      <h1>What do Mahaperiyava’s teachings say?</h1>
+      <p class="lead">Ask naturally. Receive a clear, grounded answer first — with the supporting teaching and source available underneath.</p>
       ${composer()}
       <div class="chips">
         ${examplePrompts.map((prompt) => `<button data-prompt="${escapeHtml(prompt)}">${escapeHtml(prompt.replace("What did Periyava say about ", ""))}</button>`).join("")}
       </div>
     </section>
     <section class="trust">
-      <h2>Grounded, or clearly limited.</h2>
-      <p>Direct evidence produces a direct answer. Partial evidence shows its boundary first. Weak evidence produces an abstention.</p>
+      <h2>Guidance first. Evidence close at hand.</h2>
+      <p>When the sources support an answer, the response should feel natural and useful. Boundaries appear only when the evidence genuinely requires them.</p>
     </section>
     <section class="integrity">
       <strong>About the voice of this product</strong>
-      <p>Just Periyava is an evidence-based curated representation of documented teachings. It does not present AI as Mahaperiyava speaking to you.</p>
+      <p>Responses are grounded in documented teachings and clearly separated from verbatim quotations. The product does not present generated prose as Sri Mahaperiyava’s literal words.</p>
     </section>
   `;
 }
@@ -118,8 +118,8 @@ function askPage() {
   return `
     <section class="page-head">
       <p class="eyebrow">Ask</p>
-      <h1>Bring a question.</h1>
-      <p>We will bring back only what the curated evidence can support.</p>
+      <h1>Seek guidance from the teachings.</h1>
+      <p>Ask in your own words. The answer stays within what the documented evidence can support.</p>
     </section>
     ${composer()}
     <p class="quality-note">Questions and optional feedback may be retained for quality review. They never become source evidence.</p>
@@ -144,14 +144,17 @@ function emptyCard() {
 function teachingList(answer) {
   if (!answer.teachings?.length) return "";
   return `
-    <div class="teachings">
-      ${answer.teachings.map((item, index) => `
-        <article>
-          <span>${String(index + 1).padStart(2, "0")}</span>
-          <div><p>${escapeHtml(item.text)}</p><small>${escapeHtml(item.sourceLabel || "")}</small></div>
-        </article>
-      `).join("")}
-    </div>
+    <details class="evidence-details">
+      <summary>Sources & supporting teachings</summary>
+      <div class="teachings">
+        ${answer.teachings.map((item, index) => `
+          <article>
+            <span>${String(index + 1).padStart(2, "0")}</span>
+            <div><p>${escapeHtml(item.text)}</p><small>${escapeHtml(item.sourceLabel || "")}</small></div>
+          </article>
+        `).join("")}
+      </div>
+    </details>
   `;
 }
 
@@ -185,7 +188,7 @@ function answerCard(answer) {
         <button id="save-answer" ${isSaved ? "disabled" : ""}>${isSaved ? "Saved" : "Save"}</button>
       </div>
       ${boundary}
-      <h2>${answer.state === "qualified" ? "What the teachings do support" : "What the teachings support"}</h2>
+      <h2>${answer.state === "qualified" ? "Guidance within the evidence" : "Guidance from the teachings"}</h2>
       ${supportedText}
       ${teachingList(answer)}
       ${answerFooter(answer)}
@@ -196,7 +199,10 @@ function answerCard(answer) {
 function answerFooter(answer) {
   return `
     <footer class="answer-footer">
-      <p>${escapeHtml(answer.trustNote || "")}</p>
+      <details class="trust-details">
+        <summary>About this answer</summary>
+        <p>${escapeHtml(answer.trustNote || "")}</p>
+      </details>
       ${answer.interactionId ? `
         <div class="feedback">
           <span>Was this useful?</span>
@@ -277,7 +283,7 @@ function render() {
     : homePage();
 
   app.innerHTML = `
-    <header><button class="brand" data-route="home"><span class="mark"></span><span><b>Just Periyava</b><small>Evidence before eloquence</small></span></button></header>
+    <header><button class="brand" data-route="home"><span class="mark"></span><span><b>Sri Mahaperiyava Arulurai</b><small>Guidance grounded in documented teachings</small></span></button></header>
     <main>${page}</main>
     ${nav()}
   `;
