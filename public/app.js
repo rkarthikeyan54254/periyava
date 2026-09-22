@@ -22,6 +22,7 @@ const state = {
   answer: null,
   loading: false,
   error: null,
+  feedback: null,
 };
 
 function escapeHtml(value = "") {
@@ -65,11 +66,18 @@ function composer() {
       <label class="sr-only" for="question">Ask a question</label>
       <textarea id="question" maxlength="2000" placeholder="What did Periyava say about…">${escapeHtml(state.question)}</textarea>
       <div class="composer-actions">
-        <span>English · தமிழ் · Roman Tamil</span>
+        <div class="dictation-tools">
+          <button type="button" id="dictate" class="dictate">Dictate</button>
+          <select id="dictation-language" aria-label="Dictation language">
+            <option value="en-IN">English</option>
+            <option value="ta-IN">தமிழ்</option>
+          </select>
+        </div>
         <button type="submit" class="primary" ${state.loading ? "disabled" : ""}>
           ${state.loading ? "Checking evidence…" : "Ask Periyava"}
         </button>
       </div>
+      <small class="dictation-note">Dictation remains editable and never submits on its own.</small>
     </form>
   `;
 }
@@ -144,6 +152,7 @@ function answerCard(answer) {
         <h2>We can’t responsibly attribute a direct answer.</h2>
         <p class="prose">${escapeHtml(answer.message)}</p>
         <p class="muted">${escapeHtml(answer.corpusBoundary)}</p>
+        ${answerFooter(answer)}
       </article>
     `;
   }
@@ -168,8 +177,24 @@ function answerCard(answer) {
       <h2>${answer.state === "qualified" ? "What the teachings do support" : "What the teachings support"}</h2>
       ${supportedText}
       ${teachingList(answer)}
-      <footer>${escapeHtml(answer.trustNote || "")}</footer>
+      ${answerFooter(answer)}
     </article>
+  `;
+}
+
+function answerFooter(answer) {
+  return `
+    <footer class="answer-footer">
+      <p>${escapeHtml(answer.trustNote || "")}</p>
+      ${answer.interactionId ? `
+        <div class="feedback">
+          <span>Was this useful?</span>
+          <button type="button" data-rating="up">Yes</button>
+          <button type="button" data-rating="down">Not quite</button>
+          ${state.feedback ? `<em>${escapeHtml(state.feedback)}</em>` : ""}
+        </div>
+      ` : ""}
+    </footer>
   `;
 }
 
@@ -242,6 +267,7 @@ function render() {
       state.question = button.dataset.prompt;
       state.answer = null;
       state.error = null;
+      state.feedback = null;
       go("ask");
     });
   });
@@ -251,8 +277,15 @@ function render() {
   if (field) field.addEventListener("input", (event) => { state.question = event.target.value; });
   if (form) form.addEventListener("submit", submitQuestion);
 
+  const dictateButton = app.querySelector("#dictate");
+  if (dictateButton) dictateButton.addEventListener("click", startDictation);
+
   const saveButton = app.querySelector("#save-answer");
   if (saveButton) saveButton.addEventListener("click", saveCurrent);
+
+  app.querySelectorAll("[data-rating]").forEach((button) => {
+    button.addEventListener("click", () => sendFeedback(button.dataset.rating));
+  });
 
   app.querySelectorAll("[data-reopen]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -274,11 +307,12 @@ async function submitQuestion(event) {
   state.loading = true;
   state.error = null;
   state.answer = null;
+  state.feedback = null;
   history.replaceState(null, "", "#ask");
   render();
 
   try {
-    const response = await fetch("/api/answer", {
+    const response = await fetch("./api/answer", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ question }),
@@ -293,6 +327,79 @@ async function submitQuestion(event) {
     render();
     scrollTo({ top: 0, behavior: "smooth" });
   }
+}
+
+async function sendFeedback(rating) {
+  if (!state.answer?.interactionId || state.feedback) return;
+
+  try {
+    const response = await fetch("./api/feedback", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        interactionId: state.answer.interactionId,
+        rating,
+      }),
+    });
+    state.feedback = response.ok ? "Thank you." : "Feedback could not be saved.";
+  } catch {
+    state.feedback = "Feedback could not be saved.";
+  }
+
+  render();
+}
+
+function startDictation() {
+  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const button = app.querySelector("#dictate");
+  const field = app.querySelector("#question");
+
+  if (!Recognition) {
+    if (button) {
+      button.textContent = "Dictation unavailable";
+      button.disabled = true;
+    }
+    return;
+  }
+
+  const recognition = new Recognition();
+  const baseline = (field?.value || "").trim();
+  recognition.lang =
+    app.querySelector("#dictation-language")?.value || "en-IN";
+  recognition.interimResults = true;
+  recognition.continuous = false;
+
+  if (button) {
+    button.textContent = "Listening…";
+    button.disabled = true;
+  }
+
+  recognition.onresult = (event) => {
+    let transcript = "";
+    for (let index = 0; index < event.results.length; index += 1) {
+      transcript += event.results[index][0].transcript;
+    }
+
+    state.question = [baseline, transcript.trim()].filter(Boolean).join(" ");
+    if (field) field.value = state.question;
+  };
+
+  recognition.onend = () => {
+    if (button) {
+      button.textContent = "Dictate";
+      button.disabled = false;
+    }
+    if (field) field.focus();
+  };
+
+  recognition.onerror = () => {
+    if (button) {
+      button.textContent = "Dictate";
+      button.disabled = false;
+    }
+  };
+
+  recognition.start();
 }
 
 addEventListener("hashchange", render);
