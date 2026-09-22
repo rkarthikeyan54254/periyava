@@ -1,0 +1,39 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/v1/mahaperiyava/answer"
+  to = "/api/answer"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/v1/mahaperiyava/feedback"
+  to = "/api/feedback"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/mahaperiyava"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/mahaperiyava/"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/mahaperiyava/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data:; manifest-src 'self'; object-src 'none'; script-src 'self'; style-src 'self'"
+    Permissions-Policy = "camera=(), geolocation=(), microphone=(self)"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
