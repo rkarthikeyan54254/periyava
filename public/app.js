@@ -312,7 +312,7 @@ async function submitQuestion(event) {
   render();
 
   try {
-    const response = await fetch("./api/answer", {
+    const response = await fetch("/api/answer", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ question }),
@@ -333,7 +333,7 @@ async function sendFeedback(rating) {
   if (!state.answer?.interactionId || state.feedback) return;
 
   try {
-    const response = await fetch("./api/feedback", {
+    const response = await fetch("/api/feedback", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
