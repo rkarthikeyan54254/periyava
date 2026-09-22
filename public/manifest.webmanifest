@@ -1,0 +1,10 @@
+{
+  "name": "Just Periyava",
+  "short_name": "Just Periyava",
+  "description": "Evidence-grounded answers from curated Mahaperiyava teachings.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f4ee",
+  "theme_color": "#f7f4ee",
+  "icons": []
+}
