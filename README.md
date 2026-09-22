@@ -1,6 +1,8 @@
-# Just Periyava
+# Sri Mahaperiyava Arulurai
 
-**Just Periyava** is a deliberately small consumer product shell over the private Pramāṇa Mahaperiyava evidence service.
+**Sri Mahaperiyava Arulurai** is the consumer-facing name. “Arulurai” is used here in the respectful sense of teachings/discourse; generated presentation text is never represented as a verbatim quotation unless explicitly marked.
+
+**Sri Mahaperiyava Arulurai** is a deliberately small consumer product shell over the private Pramāṇa Mahaperiyava evidence service.
 
 Its job is simple: help a person ask **“What did Periyava say?”** without exposing retrieval machinery, corpus internals, model terminology, restricted source text, or infrastructure details.
 
@@ -20,7 +22,7 @@ This repository **must never become a corpus repository**.
 ```text
 Browser
   ↓ same-origin /api/*
-Just Periyava Node server
+Sri Mahaperiyava Arulurai Node server
   ↓ service credential remains server-side
 Pramāṇa Mahaperiyava API
   ↓
@@ -51,7 +53,7 @@ The smoke test sends a real question through the Pramāṇa answer endpoint, val
 
 ## Product integrity
 
-Just Periyava does not log question text in this product service. Questions are sent to Pramāṇa for evidence lookup; the existing controlled beta ledger policy remains authoritative on the backend.
+Sri Mahaperiyava Arulurai does not log question text in this product service. Questions are sent to Pramāṇa for evidence lookup; the existing controlled beta ledger policy remains authoritative on the backend.
 
 The UI explicitly describes answers as an **evidence-based curated representation of documented teachings**, not Mahaperiyava literally speaking through AI.
 
