@@ -299,6 +299,9 @@ function askPage() {
         <h1>${escapeHtml(t("askTitle"))}</h1>
         <p>${escapeHtml(t("askLead"))}</p>
       </div>
+      <div class="ask-head-art" aria-hidden="true">
+        <img src="/assets/mahaperiyava-hero.webp" alt="" loading="eager" decoding="async">
+      </div>
     </section>
     ${composer()}
     <p class="quality-note">${escapeHtml(t("qualityNote"))}</p>
