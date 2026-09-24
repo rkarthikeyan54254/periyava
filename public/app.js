@@ -264,13 +264,20 @@ function composer() {
 
 function homePage() {
   return `
-    <section class="hero">
-      <p class="eyebrow">${escapeHtml(t("homeEyebrow"))}</p>
-      <h1>${escapeHtml(t("homeTitle"))}</h1>
-      <p class="lead">${escapeHtml(t("homeLead"))}</p>
-      ${composer()}
-      <div class="chips">
-        ${t("examples").map((prompt) => `<button data-prompt="${escapeHtml(prompt)}">${escapeHtml(prompt)}</button>`).join("")}
+    <section class="hero home-hero">
+      <div class="hero-copy">
+        <p class="eyebrow">${escapeHtml(t("homeEyebrow"))}</p>
+        <h1>${escapeHtml(t("homeTitle"))}</h1>
+        <p class="lead">${escapeHtml(t("homeLead"))}</p>
+      </div>
+      <div class="hero-emblem" aria-hidden="true">
+        <img src="/assets/mahaperiyava-mark.webp" alt="" loading="eager" decoding="async">
+      </div>
+      <div class="hero-compose">
+        ${composer()}
+        <div class="chips">
+          ${t("examples").map((prompt) => `<button data-prompt="${escapeHtml(prompt)}">${escapeHtml(prompt)}</button>`).join("")}
+        </div>
       </div>
     </section>
     <section class="trust">
@@ -286,10 +293,12 @@ function homePage() {
 
 function askPage() {
   return `
-    <section class="page-head">
-      <p class="eyebrow">${escapeHtml(t("askLabel"))}</p>
-      <h1>${escapeHtml(t("askTitle"))}</h1>
-      <p>${escapeHtml(t("askLead"))}</p>
+    <section class="page-head ask-head">
+      <div class="ask-head-copy">
+        <p class="eyebrow">${escapeHtml(t("askLabel"))}</p>
+        <h1>${escapeHtml(t("askTitle"))}</h1>
+        <p>${escapeHtml(t("askLead"))}</p>
+      </div>
     </section>
     ${composer()}
     <p class="quality-note">${escapeHtml(t("qualityNote"))}</p>
@@ -468,7 +477,7 @@ function render() {
 
   app.innerHTML = `
     <header>
-      <button class="brand" data-route="home"><span class="mark"></span><span><b>ஸ்ரீ மஹாபெரியவா அருளுரை</b><small>${escapeHtml(t("brandSub"))}</small></span></button>
+      <button class="brand" data-route="home"><span class="mark"><img src="/assets/mahaperiyava-mark.webp" alt="" aria-hidden="true"></span><span><b>ஸ்ரீ மஹாபெரியவா அருளுரை</b><small>${escapeHtml(t("brandSub"))}</small></span></button>
       ${languageTabs()}
     </header>
     <main>${page}</main>
