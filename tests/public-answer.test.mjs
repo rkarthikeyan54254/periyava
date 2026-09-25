@@ -180,3 +180,60 @@ test("Tamil deterministic fallback is preserved when it is source-bound", () => 
   assert.equal(out.answerText, tamil);
   assert.equal(/\b[A-Za-z]{2,}\b/.test(out.answerText), false);
 });
+
+
+test("app-generated application is exposed separately from source-grounded answer", () => {
+  const out = toPublicAnswer({
+    interaction_id: "application-1",
+    query: "I am not getting involved in my work. How can I improve?",
+    answerable: true,
+    answer: {
+      display_text: "Repeated practice and disciplined effort steady the wandering mind.",
+      modern_application: {
+        label: "app_generated",
+        text: "Make the work small enough to begin, stay with one piece, and bring the mind back when it wanders.",
+        derived_from_support_ids: ["private-support"],
+      },
+    },
+    claims: [{
+      text: "Repeated practice steadies attention.",
+      source_label: "Deivathin Kural — Vol. 4",
+      support_ids: ["private-support"],
+    }],
+    policy: { question_evidence_sufficiency: "supported" },
+  });
+
+  assert.equal(out.answerText, "Repeated practice and disciplined effort steady the wandering mind.");
+  assert.equal(out.applicationGenerated, true);
+  assert.match(out.applicationText, /Make the work small enough/);
+  assert.equal(JSON.stringify(out).includes("private-support"), false);
+});
+
+
+test("Tamil app-generated application must itself be Tamil-safe", () => {
+  const out = toPublicAnswer({
+    interaction_id: "application-ta",
+    query: "வேலையில் மனம் ஒன்றவில்லை. என்ன செய்யலாம்?",
+    answerable: true,
+    answer: {
+      display_text: "மனம் விலகும்போது அதை மீண்டும் பயிற்சியால் நிலைப்படுத்த வேண்டும் என்ற கருத்து இங்கு வலியுறுத்தப்படுகிறது.",
+      modern_application: {
+        label: "app_generated",
+        text: "Make one small task and focus on it.",
+      },
+    },
+    claims: [{
+      text: "பயிற்சியும் விடாமுயற்சியும் மனத்தை நிலைப்படுத்த உதவுகின்றன.",
+      source_label: "தெய்வத்தின் குரல் — தொகுதி 4",
+      support_ids: ["s1"],
+    }],
+    policy: {
+      response_language: "ta",
+      question_evidence_sufficiency: "supported",
+    },
+  });
+
+  assert.equal(out.applicationText, null);
+  assert.equal(out.applicationGenerated, false);
+  assert.match(out.answerText, /மனம்/);
+});
