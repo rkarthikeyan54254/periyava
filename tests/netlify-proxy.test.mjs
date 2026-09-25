@@ -26,8 +26,11 @@ test("Netlify adapter reuses legacy backend token and preserves public DTO", asy
         display_text: "Grounded answer.",
         presentation: {
           kind: "validated_grounded_synthesis",
-          text: "Natural grounded answer.",
-          claims: [],
+          text: "ஆவணப்படுத்தப்பட்ட உபதேசத்தின் அடிப்படையில் இயல்பான பதில்.",
+          claims: [{
+            text: "ஆவணப்படுத்தப்பட்ட தொடர்புடைய உபதேசம்.",
+            support_ids: ["private-support-id"],
+          }],
         },
       },
       claims: [{
@@ -65,7 +68,7 @@ test("Netlify adapter reuses legacy backend token and preserves public DTO", asy
   assert.equal(response.status, 200);
   const body = await response.json();
   assert.equal(body.state, "supported");
-  assert.equal(body.answerText, "Natural grounded answer.");
+  assert.equal(body.answerText, "ஆவணப்படுத்தப்பட்ட உபதேசத்தின் அடிப்படையில் இயல்பான பதில்.");
   const serialized = JSON.stringify(body);
   assert.equal(serialized.includes("private-support-id"), false);
   assert.equal(serialized.includes("restricted_text"), false);
