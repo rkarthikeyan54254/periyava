@@ -128,3 +128,55 @@ test("abstention is a corpus limitation, not a historical claim", () => {
   assert.match(out.corpusBoundary, /not a claim that Sri Mahaperiyava never spoke/);
   assert.deepEqual(out.teachings, []);
 });
+
+
+test("Tamil question never leaks an English deterministic fallback", () => {
+  const out = toPublicAnswer({
+    interaction_id: "ta-fallback",
+    query: "உபநயனம் செய்ய சரியான வயது என்ன?",
+    answerable: true,
+    answer: {
+      display_text: "The retrieved Deivathin Kural teachings support the following explanation.",
+    },
+    claims: [{
+      text: "An English curator summary that must not leak into a Tamil answer.",
+      source_label: "Deivathin Kural — Vol. 5, Chapter 251",
+      support_ids: ["s1"],
+    }],
+    policy: {
+      response_language: "ta",
+      question_evidence_sufficiency: "supported",
+    },
+  });
+
+  assert.equal(out.state, "supported");
+  assert.match(out.answerText, /தமிழில்/);
+  assert.equal(/\bThe\b/.test(out.answerText), false);
+  assert.deepEqual(out.teachings, []);
+  assert.match(out.trustNote, /ஆவணப்படுத்தப்பட்ட/);
+});
+
+
+test("Tamil deterministic fallback is preserved when it is source-bound", () => {
+  const tamil =
+    "பிராமணப் பையனுக்கு நித்ய உபநயனத்தின் முக்கிய காலம் கர்ப்பத்தைக் கணக்கில் கொண்டு எட்டாவது வயது என்று கூறப்படுகிறது.";
+
+  const out = toPublicAnswer({
+    interaction_id: "ta-source-bound",
+    query: "உபநயனம் செய்ய சரியான வயது என்ன?",
+    answerable: true,
+    answer: { display_text: tamil },
+    claims: [{
+      text: "English curator metadata is not shown as Tamil prose.",
+      source_label: "Deivathin Kural — Vol. 5, Chapter 251",
+      support_ids: ["s1"],
+    }],
+    policy: {
+      response_language: "ta",
+      question_evidence_sufficiency: "supported",
+    },
+  });
+
+  assert.equal(out.answerText, tamil);
+  assert.equal(/\b[A-Za-z]{2,}\b/.test(out.answerText), false);
+});
