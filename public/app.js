@@ -3,6 +3,10 @@ const app = document.querySelector("#app");
 const STORAGE_KEY = "arulurai:saved:v2";
 const LANGUAGE_KEY = "arulurai:language:v1";
 
+function responseLanguageFor(question) {
+  return /[\u0B80-\u0BFF]/u.test(question || "") ? "ta" : state.language;
+}
+
 const copy = {
   en: {
     brandSub: "Guidance grounded in documented teachings",
@@ -569,7 +573,10 @@ async function submitQuestion(event) {
     const response = await fetch("/api/answer", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ question, responseLanguage: state.language }),
+      body: JSON.stringify({
+        question,
+        responseLanguage: responseLanguageFor(question),
+      }),
     });
     const payload = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(payload.error || "The evidence lookup could not be completed.");
