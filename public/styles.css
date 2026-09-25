@@ -84,6 +84,12 @@ main{padding:8px 20px 50px}
 .boundary{background:var(--qualified-soft);border:1px solid rgba(125,96,63,.18);border-radius:18px;padding:17px;margin-bottom:27px}
 .boundary strong{display:block;color:var(--qualified);text-transform:uppercase;letter-spacing:.11em;font-size:10px;margin-bottom:6px}
 .boundary p{margin:0;color:#5f4d3a;line-height:1.6;font-size:14px}
+.application{margin:24px 0 4px;padding:18px 19px;border-radius:18px;background:rgba(115,63,60,.055);border:1px solid rgba(115,63,60,.12)}
+.application strong{display:block;font-family:var(--serif);font-weight:500;color:var(--accent);font-size:16px;margin-bottom:8px}
+.application p{margin:0;font-family:var(--serif);font-size:16px;line-height:1.68;color:#403833}
+.application small{display:block;margin-top:10px;color:var(--faint);font-size:10px;line-height:1.5}
+html[lang="ta"] .application strong{font-size:15px}
+html[lang="ta"] .application p{line-height:1.8}
 .teachings{border-top:1px solid var(--line);margin-top:22px}
 .teachings article{display:grid;grid-template-columns:34px 1fr;gap:13px;padding:21px 0;border-bottom:1px solid var(--line)}
 .teachings article>span{font-family:var(--serif);color:var(--faint);font-size:11px;padding-top:4px}
