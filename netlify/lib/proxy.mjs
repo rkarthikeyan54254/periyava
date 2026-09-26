@@ -15,6 +15,54 @@ const JSON_HEADERS = {
   "referrer-policy": "strict-origin-when-cross-origin",
 };
 
+const EXPLICIT_ABUSE_PATTERNS = [
+  /\b(?:fuck(?:ing|er)?|motherfucker|cunt|asshole|bitch(?:es)?)\b/iu,
+  /\b(?:porn(?:ographic)?|blowjob|handjob|gangbang|sex\s+position(?:s)?|send\s+nudes?)\b/iu,
+  /\b(?:nigg(?:er|a)|faggot|kike|chink)\b/iu,
+  /\b(?:rape\s+fantasy|sexual\s+fantasy\s+about\s+(?:a\s+)?(?:child|minor))\b/iu,
+];
+
+const EXACT_CORRECTIONS = new Map([
+  ["mariarage", "marriage"],
+  ["marraige", "marriage"],
+  ["marrage", "marriage"],
+  ["marige", "marriage"],
+  ["mahaperiayva", "mahaperiyava"],
+  ["mahaperiyva", "mahaperiyava"],
+  ["mahaperiyavaa", "mahaperiyava"],
+  ["periyvaa", "periyava"],
+  ["periyva", "periyava"],
+  ["dhrama", "dharma"],
+  ["dhamra", "dharma"],
+  ["bakthi", "bhakti"],
+  ["bhakthi", "bhakti"],
+  ["nithyakarma", "nithya karma"],
+  ["nityakarma", "nithya karma"],
+  ["sandhyavandhanam", "sandhyavandanam"],
+  ["sandhyavandan", "sandhyavandanam"],
+  ["upanayanam", "upanayana"],
+]);
+
+const DOMAIN_TERMS = [
+  "marriage",
+  "mahaperiyava",
+  "periyava",
+  "dharma",
+  "karma",
+  "bhakti",
+  "prayer",
+  "temple",
+  "student",
+  "anger",
+  "jealousy",
+  "discipline",
+  "sandhyavandanam",
+  "upanayana",
+  "sanskrit",
+  "tamil",
+  "nithya",
+];
+
 function env(name) {
   return (
     globalThis.Netlify?.env?.get?.(name) ??
@@ -98,6 +146,90 @@ function upstreamMessage(status, packet) {
   );
 }
 
+function editDistance(a, b) {
+  const left = String(a || "").toLowerCase();
+  const right = String(b || "").toLowerCase();
+  const previous = Array.from({ length: right.length + 1 }, (_, index) => index);
+
+  for (let i = 1; i <= left.length; i += 1) {
+    const current = [i];
+    for (let j = 1; j <= right.length; j += 1) {
+      current[j] = Math.min(
+        current[j - 1] + 1,
+        previous[j] + 1,
+        previous[j - 1] + (left[i - 1] === right[j - 1] ? 0 : 1),
+      );
+    }
+    previous.splice(0, previous.length, ...current);
+  }
+  return previous[right.length];
+}
+
+function preserveCase(source, replacement) {
+  if (source === source.toUpperCase()) return replacement.toUpperCase();
+  if (source[0] === source[0]?.toUpperCase()) {
+    return replacement[0].toUpperCase() + replacement.slice(1);
+  }
+  return replacement;
+}
+
+export function normalizeQuestion(question) {
+  const corrections = [];
+  let normalized = String(question || "");
+
+  normalized = normalized.replace(/\b[A-Za-z][A-Za-z'-]{3,}\b/g, (token) => {
+    const lower = token.toLowerCase();
+    const exact = EXACT_CORRECTIONS.get(lower);
+    if (exact) {
+      const replacement = preserveCase(token, exact);
+      if (replacement.toLowerCase() !== lower) {
+        corrections.push({ from: token, to: replacement });
+      }
+      return replacement;
+    }
+
+    if (DOMAIN_TERMS.includes(lower) || token.length < 5) return token;
+
+    let best = null;
+    let bestDistance = Infinity;
+    let ties = 0;
+    for (const term of DOMAIN_TERMS) {
+      if (Math.abs(term.length - lower.length) > 2) continue;
+      const distance = editDistance(lower, term);
+      if (distance < bestDistance) {
+        best = term;
+        bestDistance = distance;
+        ties = 1;
+      } else if (distance === bestDistance) {
+        ties += 1;
+      }
+    }
+
+    const threshold = token.length >= 10 ? 2 : token.length >= 6 ? 1 : 0;
+    if (!best || ties !== 1 || bestDistance > threshold) return token;
+
+    const replacement = preserveCase(token, best);
+    corrections.push({ from: token, to: replacement });
+    return replacement;
+  });
+
+  return {
+    question: normalized.replace(/\s+/g, " ").trim(),
+    corrections,
+  };
+}
+
+export function respectfulQuestionBoundary(question) {
+  const text = String(question || "").normalize("NFKC");
+  const blocked = EXPLICIT_ABUSE_PATTERNS.some((pattern) => pattern.test(text));
+  if (!blocked) return null;
+
+  const tamil = /[\u0B80-\u0BFF]/u.test(text);
+  return tamil
+    ? "கேள்வியை மரியாதையுடன் மாற்றிக் கேளுங்கள். நுணுக்கமான சமய, சமூக அல்லது குடும்ப விஷயங்களை கேட்கலாம்; ஆனால் இழிவான, வெறுப்பூட்டும் அல்லது வெளிப்படையான பாலியல் மொழியுள்ள கேள்விகள் பக்தி ஆதார சேவைக்கு அனுப்பப்படாது."
+    : "Please rephrase the question respectfully. Sensitive religious, social and family topics are welcome, but abusive, degrading, hateful or pornographically explicit prompts are not sent to the devotional evidence service.";
+}
+
 export async function answer(request) {
   if (request.method !== "POST") {
     return json(405, { error: "POST required." }, { allow: "POST" });
@@ -105,20 +237,30 @@ export async function answer(request) {
 
   try {
     const body = await readJson(request);
-    const question = typeof body.question === "string" ? body.question.trim() : "";
+    const originalQuestion =
+      typeof body.question === "string" ? body.question.trim() : "";
     const responseLanguage = ["en", "ta"].includes(body.responseLanguage)
       ? body.responseLanguage
       : null;
-    if (!question || question.length > 2000) {
+    if (!originalQuestion || originalQuestion.length > 2000) {
       return json(422, {
         error: "Please enter a question between 1 and 2,000 characters.",
       });
     }
 
+    const respectBoundary = respectfulQuestionBoundary(originalQuestion);
+    if (respectBoundary) {
+      return json(422, {
+        code: "respectful_question_required",
+        error: respectBoundary,
+      });
+    }
+
+    const normalized = normalizeQuestion(originalQuestion);
     const upstream = await callPramana("/v1/mahaperiyava/answer", {
       method: "POST",
       body: JSON.stringify({
-        query: question,
+        query: normalized.question,
         top_k: 8,
         ...(responseLanguage ? { response_language: responseLanguage } : {}),
       }),
@@ -131,7 +273,17 @@ export async function answer(request) {
       });
     }
 
-    return json(200, toPublicAnswer(packet));
+    const publicAnswer = toPublicAnswer(packet);
+    return json(200, {
+      ...publicAnswer,
+      question: originalQuestion,
+      interpretation: normalized.corrections.length
+        ? {
+            normalizedQuestion: normalized.question,
+            corrections: normalized.corrections,
+          }
+        : null,
+    });
   } catch (error) {
     const status =
       error?.status || (error?.name === "AbortError" ? 504 : 502);
@@ -193,7 +345,7 @@ export async function health() {
   if (!apiBase.startsWith("https://") || !proxyToken) {
     return json(200, {
       status: "ok",
-      product: "just-periyava",
+      product: "ask-mahaperiyava",
       evidenceService: "not_configured",
     });
   }
@@ -216,7 +368,7 @@ export async function health() {
 
   return json(200, {
     status: "ok",
-    product: "just-periyava",
+    product: "ask-mahaperiyava",
     evidenceService,
   });
 }
