@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="How Ask Mahaperiyava by Pramāṇa works: source coverage, evidence boundaries, synthesis, beta status and contact." />
+    <meta name="theme-color" content="#f7f4ee" />
+    <link rel="icon" href="/assets/mahaperiyava-mark.webp" type="image/webp" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/enhancements.css" />
+    <title>About Ask Mahaperiyava · Pramāṇa</title>
+    <script>
+      (() => {
+        const saved = localStorage.getItem("ask-mahaperiyava:theme:v1");
+        const theme = saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <main class="info-page">
+      <header>
+        <a class="info-brand" href="/#home">
+          <img src="/assets/mahaperiyava-mark.webp" alt="" />
+          <span><strong>Ask Mahaperiyava</strong><br><small>Pramāṇa · evidence-first devotional research</small></span>
+        </a>
+      </header>
+
+      <article>
+        <p class="eyebrow">About</p>
+        <h1>Ask Mahaperiyava</h1>
+        <p class="lede">A respectful way to explore Sri Mahaperiyava’s documented teachings without asking a language model to stand in for the source.</p>
+
+        <div class="notice">
+          <strong>Beta</strong>
+          <p>This is an independent research beta, not an official Sri Kanchi Kamakoti Peetham website. Answers may take a few seconds because the service retrieves and checks supporting evidence before presenting a response.</p>
+        </div>
+
+        <h2>What is Pramāṇa?</h2>
+        <p>Pramāṇa is an evidence-first devotional research project. Its purpose is to make important Hindu source traditions easier to explore while preserving a clear distinction between documented source evidence, editorial curation and generated explanatory prose.</p>
+
+        <h2>What sources does this site currently use?</h2>
+        <p>The current Mahaperiyava experience is grounded in the seven verified volumes of <em>Deivathin Kural</em>, also known in English as <em>Voice of God</em>. The service searches curated teaching records derived from those volumes and returns source labels with supported or qualified answers.</p>
+        <p>If those seven volumes do not establish a sufficiently direct answer, the site should say so. That is a statement about the current verified corpus—not a claim that Sri Mahaperiyava never spoke on the subject elsewhere.</p>
+
+        <h2>How is an answer produced?</h2>
+        <ol>
+          <li>Your question is normalized for a small set of obvious spelling mistakes and interpreted in English or Tamil.</li>
+          <li>The Pramāṇa retrieval layer searches the verified teaching records for relevant evidence.</li>
+          <li>An evidence-sufficiency gate decides whether the material supports a direct answer, only a qualified answer, or no responsible attribution.</li>
+          <li>When synthesis is used, a language model may help phrase the answer naturally. The model is not treated as the source.</li>
+          <li>Supporting teachings and evidence boundaries remain available with the answer.</li>
+        </ol>
+
+        <h2>What should I expect?</h2>
+        <ul>
+          <li>Ask naturally. English, Tamil and common Roman-Tamil phrasing are supported.</li>
+          <li>Questions about practice, dharma, prayer, education, family life, emotions and texts are welcome when asked respectfully.</li>
+          <li>The site may qualify an answer when the corpus supports a related principle but not the exact personal instruction requested.</li>
+          <li>The site is not an oracle, a substitute for a guru or ācārya, or a tool for personal religious rulings.</li>
+          <li>Generated wording is not presented as Sri Mahaperiyava’s verbatim speech unless it is explicitly marked as a quotation.</li>
+        </ul>
+
+        <h2>Why only one follow-up?</h2>
+        <p>The follow-up feature is intentionally bounded. It lets you refine one answer once, but the follow-up is independently re-grounded in the source evidence. There is no open-ended conversation memory. This keeps the product closer to an evidence-guided research experience than a chatbot.</p>
+
+        <h2>Why is there no “questions answered” counter?</h2>
+        <p>Pramāṇa optimizes for evidence quality rather than engagement volume. A public question counter can reward quantity without saying anything about correctness. The more meaningful number today is source coverage: seven verified volumes, with answer boundaries shown explicitly.</p>
+
+        <h2 id="contact">Contact</h2>
+        <p>Use this form for corrections, source suggestions, product feedback or collaboration. The maintainer’s personal email address is intentionally not published on the site.</p>
+
+        <form name="pramana-contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/about.html?sent=1#contact">
+          <input type="hidden" name="form-name" value="pramana-contact" />
+          <p class="sr-only"><label>Do not fill this out: <input name="bot-field" /></label></p>
+          <label>Your email<input type="email" name="email" autocomplete="email" required maxlength="200" /></label>
+          <label>Subject<input type="text" name="subject" required maxlength="160" /></label>
+          <label>Message<textarea name="message" required maxlength="4000"></textarea></label>
+          <button class="primary" type="submit">Send message</button>
+        </form>
+
+        <div class="info-footer">
+          <span>Pramāṇa · independent beta</span>
+          <span><a href="/#home">Ask Mahaperiyava</a> · <a href="/privacy.html">Privacy</a></span>
+        </div>
+      </article>
+    </main>
+  </body>
+</html>
