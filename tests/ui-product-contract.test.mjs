@@ -6,6 +6,7 @@ const app = await readFile(new URL("../public/app.js", import.meta.url), "utf8")
 const index = await readFile(new URL("../public/index.html", import.meta.url), "utf8");
 const about = await readFile(new URL("../public/about.html", import.meta.url), "utf8");
 const privacy = await readFile(new URL("../public/privacy.html", import.meta.url), "utf8");
+const infoTheme = await readFile(new URL("../public/info-theme.js", import.meta.url), "utf8");
 
 test("production UI has no observer-driven enhancement runtime", () => {
   assert.equal(app.includes("MutationObserver"), false);
@@ -54,6 +55,15 @@ test("About and Privacy expose Pramāṇa, corpus scope, contact and browser-loc
   assert.match(about, /name="pramana-contact"/);
   assert.match(privacy, /browser/i);
   assert.match(privacy, /saved/i);
+});
+
+test("information pages use only self-hosted CSP-compatible theme JavaScript", () => {
+  assert.match(about, /<script defer src="\/info-theme\.js"><\/script>/);
+  assert.match(privacy, /<script defer src="\/info-theme\.js"><\/script>/);
+  assert.equal(/<script>(?:.|\n)*?<\/script>/.test(about), false);
+  assert.equal(/<script>(?:.|\n)*?<\/script>/.test(privacy), false);
+  assert.equal(infoTheme.includes("MutationObserver"), false);
+  assert.match(infoTheme, /ask-mahaperiyava:theme:v1/);
 });
 
 test("main product does not add a vanity questions-answered counter", () => {
