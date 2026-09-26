@@ -16,9 +16,9 @@ test("Tamil product copy avoids known translationese", () => {
   }
 });
 
-test("Tamil Ask copy reads directly and names the source naturally", () => {
-  assert.match(app, /askTitle: "உங்கள் கேள்வியை கேளுங்கள்\."/);
-  assert.match(app, /தெய்வத்தின் குரலில் உள்ள பொருத்தமான உபதேசத்தை வைத்து பதில் சொல்கிறோம்/);
-  assert.match(app, /guidance: "உபதேசத்தின் சாரம்"/);
-  assert.match(app, /applicationTitle: "இன்றைக்கு பயன்படுத்திப் பார்க்க"/);
+test("Tamil Ask copy reads directly and names the verified source naturally", () => {
+  assert.match(app, /askTitle: "மஹாபெரியவாவைக் கேளுங்கள்"/u);
+  assert.match(app, /தெய்வத்தின் குரல் தொகுதிகள் 1–7-ல் சரிபார்க்கப்பட்ட ஆதாரம்/u);
+  assert.match(app, /guidance: "உபதேசத்தின் சாரம்"/u);
+  assert.match(app, /applicationTitle: "இன்றைக்கு பயன்படுத்திப் பார்க்க"/u);
 });
