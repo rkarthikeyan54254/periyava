@@ -115,7 +115,7 @@ test("qualified packet exposes the limitation separately", () => {
   assert.equal(out.teachings[0].text, "The related documented teaching.");
 });
 
-test("abstention is a corpus limitation, not a historical claim", () => {
+test("abstention is a quantified corpus limitation, not a historical claim", () => {
   const out = toPublicAnswer({
     interaction_id: "abstain123",
     query: "Unsupported modern question",
@@ -124,8 +124,10 @@ test("abstention is a corpus limitation, not a historical claim", () => {
   });
 
   assert.equal(out.state, "abstain");
-  assert.match(out.message, /sources we have verified do not yet support/);
-  assert.match(out.corpusBoundary, /not a claim that Sri Mahaperiyava never spoke/);
+  assert.match(out.message, /seven currently verified volumes/i);
+  assert.match(out.message, /Deivathin Kural \(Voice of God\)/);
+  assert.match(out.corpusBoundary, /Volumes 1–7/);
+  assert.match(out.corpusBoundary, /does not mean Sri Mahaperiyava never spoke/);
   assert.deepEqual(out.teachings, []);
 });
 

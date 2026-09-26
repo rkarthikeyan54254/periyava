@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="Privacy information for Ask Mahaperiyava by Pramāṇa." />
+    <meta name="theme-color" content="#f7f4ee" />
+    <link rel="icon" href="/assets/mahaperiyava-mark.webp" type="image/webp" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/enhancements.css" />
+    <title>Privacy · Ask Mahaperiyava</title>
+    <script>
+      (() => {
+        const saved = localStorage.getItem("ask-mahaperiyava:theme:v1");
+        const theme = saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <main class="info-page">
+      <header>
+        <a class="info-brand" href="/#home">
+          <img src="/assets/mahaperiyava-mark.webp" alt="" />
+          <span><strong>Ask Mahaperiyava</strong><br><small>Pramāṇa · evidence-first devotional research</small></span>
+        </a>
+      </header>
+
+      <article>
+        <p class="eyebrow">Privacy</p>
+        <h1>A small-data approach.</h1>
+        <p class="lede">Ask Mahaperiyava is designed to work without requiring an account.</p>
+
+        <h2>Questions and feedback</h2>
+        <p>Questions and optional answer feedback may be retained for product quality review, abuse prevention and evidence-quality improvement. User questions do not become source evidence and do not alter the underlying corpus.</p>
+
+        <h2>Saved answers</h2>
+        <p>When you press Save, the answer is stored in your browser’s local storage. It is not currently synced to a Pramāṇa account. Returning on the same browser and device should show those saved answers; clearing site data, using a private browsing session or changing devices can remove access to them.</p>
+
+        <h2>Accounts</h2>
+        <p>There is currently no Google login or Pramāṇa account. That is intentional for the beta: authentication would add identity data, security obligations and friction before cross-device history has proven necessary. If account sync is introduced later, it should be opt-in and designed separately from the devotional evidence service.</p>
+
+        <h2>Generated answers</h2>
+        <p>The product may use a language-model provider to phrase a grounded answer. The model is not treated as an authority or source. The public response is constrained by Pramāṇa’s retrieval and evidence-sufficiency layers.</p>
+
+        <h2>Contact form</h2>
+        <p>Messages submitted through the contact form are processed by the site hosting provider and are intended only for responding to the submission and maintaining the project. The maintainer’s personal email address is not exposed in public page source.</p>
+
+        <h2>Abusive or explicit prompts</h2>
+        <p>Obvious abusive, degrading or pornographic prompts may be rejected at the public proxy before they reach the devotional evidence service. Sensitive religious or social subjects are still welcome when phrased as respectful questions.</p>
+
+        <h2>Beta notice</h2>
+        <p>This policy describes the current beta architecture and may be updated as the product gains features such as account sync or broader source coverage.</p>
+
+        <div class="info-footer">
+          <span>Pramāṇa · independent beta</span>
+          <span><a href="/#home">Ask Mahaperiyava</a> · <a href="/about.html">About</a> · <a href="/about.html#contact">Contact</a></span>
+        </div>
+      </article>
+    </main>
+  </body>
+</html>
