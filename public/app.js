@@ -2,6 +2,8 @@ const app = document.querySelector("#app");
 
 const STORAGE_KEY = "arulurai:saved:v2";
 const LANGUAGE_KEY = "arulurai:language:v1";
+const THEME_KEY = "ask-mahaperiyava:theme:v1";
+const WELCOME_KEY = "ask-mahaperiyava:welcome:v1";
 
 function responseLanguageFor(question) {
   return /[\u0B80-\u0BFF]/u.test(question || "") ? "ta" : state.language;
@@ -9,27 +11,30 @@ function responseLanguageFor(question) {
 
 const copy = {
   en: {
-    brandSub: "Guidance grounded in documented teachings",
-    homeEyebrow: "Sri Mahaperiyava Arulurai · documented teachings",
-    homeTitle: "What do Mahaperiyava’s teachings say?",
-    homeLead: "Ask naturally. Receive a clear, grounded answer first — with the supporting teaching and source available underneath.",
+    brandTitle: "Ask Mahaperiyava",
+    brandSub: "Deivathin Kural · Volumes 1–7 · evidence-grounded",
+    beta: "Beta",
+    homeEyebrow: "Pramāṇa · verified Deivathin Kural corpus",
+    homeTitle: "Ask Mahaperiyava",
+    homeLead: "Ask naturally in English or Tamil. Each answer is grounded in the seven currently verified volumes of Deivathin Kural / Voice of God, with supporting teachings and evidence boundaries kept close at hand.",
     askLabel: "Ask",
-    askTitle: "Seek guidance from the teachings.",
-    askLead: "Ask in your own words. The answer stays within what the documented evidence can support.",
+    askTitle: "Ask Mahaperiyava",
+    askLead: "Ask in your own words. We search the verified Deivathin Kural corpus and answer only to the extent the evidence supports.",
     placeholder: "What did Periyava say about…",
     dictate: "Dictate",
     listening: "Listening…",
     dictateUnavailable: "Dictation unavailable",
     dictateNote: "Dictation remains editable and never submits on its own.",
     seek: "Seek guidance",
-    consulting: "Consulting the teachings…",
-    qualityNote: "Questions and optional feedback may be retained for quality review. They never become source evidence.",
-    loading: "Consulting the documented teachings and their evidence boundaries…",
+    consulting: "Checking the sources…",
+    qualityNote: "Beta · the evidence lookup may take a few seconds. Questions and optional feedback may be retained for quality review; they never become source evidence.",
+    loading: "Checking the seven verified volumes of Deivathin Kural / Voice of God. Beta responses may take a few seconds…",
     lookupErrorTitle: "Couldn’t complete the lookup.",
+    respectfulErrorTitle: "Please rephrase the question",
     emptyTitle: "No answer yet",
-    emptyText: "Try a question about a teaching, practice, text, value or tradition.",
+    emptyText: "Try a question about a teaching, practice, text, value, emotion, family life or tradition.",
     evidenceSummary: "Sources & supporting teachings",
-    notEnough: "Not enough verified evidence yet",
+    notEnough: "No sufficiently direct evidence in the verified corpus",
     cannotAttribute: "We can’t responsibly attribute a direct answer.",
     qualified: "Qualified answer",
     supported: "Supported by curated evidence",
@@ -56,14 +61,39 @@ const copy = {
     exploreLead: "Choose a theme. Each opens a source-grounded question rather than a canned summary.",
     savedLabel: "Saved",
     savedTitle: "Your quiet shelf.",
-    savedLead: "Saved answers stay in this browser only.",
+    savedLead: "No account is required. Saved answers remain on this browser and device; clearing site data or changing devices will remove them.",
     nothingSaved: "Nothing saved yet",
     nothingSavedText: "Save a useful supported or qualified answer and it will appear here.",
     openAnswer: "Open answer →",
     trustTitle: "Guidance first. Evidence close at hand.",
-    trustText: "When the sources support an answer, the response should feel natural and useful. Boundaries appear only when the evidence genuinely requires them.",
+    trustText: "When the seven verified volumes support an answer, the response should feel natural and useful. When they do not, Pramāṇa states that boundary instead of filling the gap.",
     integrityTitle: "About the voice of this product",
-    integrityText: "Responses are grounded in documented teachings and clearly separated from verbatim quotations. The product does not present generated prose as Sri Mahaperiyava’s literal words.",
+    integrityText: "Responses are grounded in documented teachings and clearly separated from verbatim quotations. Generated prose is not presented as Sri Mahaperiyava’s literal wording.",
+    coverage: "7 verified volumes",
+    coverageDetail: "Deivathin Kural / Voice of God",
+    languageDetail: "English + தமிழ்",
+    evidenceDetail: "Direct evidence boundaries shown",
+    inspire: "Explore another question",
+    nextQuestion: "Next question",
+    themeDark: "Dark",
+    themeLight: "Light",
+    onboardingTitle: "Before you ask",
+    onboardingBody: [
+      "This is an evidence-grounded research experience, not a general chatbot or an oracle.",
+      "Current source coverage is Deivathin Kural / Voice of God, Volumes 1–7. If those verified records do not establish a direct answer, the site will say so rather than invent one.",
+      "Generated wording is a synthesis of cited teachings, not Sri Mahaperiyava’s verbatim wording unless explicitly marked.",
+    ],
+    onboardingRespect: "Sensitive subjects are welcome when asked respectfully.",
+    onboardingStart: "Start asking",
+    onboardingMore: "How Pramāṇa works",
+    followupTitle: "Ask one follow-up",
+    followupLead: "Refine this answer once. The follow-up is checked against the evidence again; it does not create an open-ended chat.",
+    followupPlaceholder: "For example: Which two practices should I begin with?",
+    followupButton: "Check this follow-up",
+    followupLoading: "Checking the sources again…",
+    followupContext: "One-step follow-up to",
+    interpretation: "We interpreted your wording as",
+    footerBeta: "Independent beta · evidence-first · not an official Kanchi Matha website",
     nav: { home: "Home", ask: "Ask", explore: "Explore", saved: "Saved" },
     feedbackTags: {
       "wrong evidence": "wrong evidence",
@@ -73,10 +103,23 @@ const copy = {
       "should have abstained": "should have abstained",
     },
     examples: [
-      "What did Periyava say about the unity of Shiva and Vishnu?",
-      "What did Periyava say about Sandhyavandanam?",
-      "What did Periyava say about a student's duties and education?",
+      "Why should I give importance to nithya karma?",
+      "What did Periyava say about controlling anger?",
+      "How should a student deal with a wandering mind?",
       "What did Periyava say about bhakti and prayer?",
+    ],
+    inspiration: [
+      "Why should I give importance to nithya karma?",
+      "What did Periyava say about controlling anger?",
+      "How should a student deal with a wandering mind?",
+      "What do the teachings say about fear and worry?",
+      "How should I build discipline in daily spiritual practice?",
+      "What did Periyava say about prayer and regularity?",
+      "What does dharma mean in ordinary daily life?",
+      "What responsibilities do parents have in shaping a child's religious life?",
+      "What did Periyava say about Tamil and Sanskrit?",
+      "What age is discussed for Upanayana?",
+      "What did Periyava say about marriage?",
     ],
     topics: [
       ["Bhakti & prayer", "What did Periyava say about bhakti and prayer?"],
@@ -88,28 +131,31 @@ const copy = {
     ],
   },
   ta: {
-    brandSub: "தெய்வத்தின் குரல் ஆதாரங்களுடன்",
-    homeEyebrow: "ஸ்ரீ மஹாபெரியவா அருளுரை · தெய்வத்தின் குரலிலிருந்து",
-    homeTitle: "மஹாபெரியவா என்ன சொல்லியிருக்கிறார்?",
-    homeLead: "உங்களுக்கு உள்ள கேள்வியை அப்படியே கேளுங்கள். தெய்வத்தின் குரலில் அதற்கு பொருத்தமான உபதேசம் இருந்தால் அதன் சாரத்தைத் தெளிவாகச் சொல்கிறோம்; இல்லையெனில் அதையும் நேராகச் சொல்கிறோம்.",
+    brandTitle: "மஹாபெரியவாவைக் கேளுங்கள்",
+    brandSub: "தெய்வத்தின் குரல் · தொகுதிகள் 1–7 · ஆதார அடிப்படையில்",
+    beta: "பீட்டா",
+    homeEyebrow: "பிரமாணம் · சரிபார்க்கப்பட்ட தெய்வத்தின் குரல் ஆதாரங்கள்",
+    homeTitle: "மஹாபெரியவாவைக் கேளுங்கள்",
+    homeLead: "தமிழிலோ ஆங்கிலத்திலோ இயல்பாகக் கேளுங்கள். தற்போது சரிபார்க்கப்பட்ட தெய்வத்தின் குரல் தொகுதிகள் 1–7 சொல்லும் அளவுக்கே பதில் தருகிறோம்; ஆதாரமும் அதன் வரம்பும் அருகிலேயே இருக்கும்.",
     askLabel: "கேள்வி",
-    askTitle: "உங்கள் கேள்வியை கேளுங்கள்.",
-    askLead: "எப்படித் தோன்றுகிறதோ அப்படியே கேளுங்கள். தெய்வத்தின் குரலில் உள்ள பொருத்தமான உபதேசத்தை வைத்து பதில் சொல்கிறோம்.",
+    askTitle: "மஹாபெரியவாவைக் கேளுங்கள்",
+    askLead: "உங்கள் சொற்களில் கேளுங்கள். தெய்வத்தின் குரல் தொகுதிகள் 1–7-ல் சரிபார்க்கப்பட்ட ஆதாரம் எவ்வளவு இருக்கிறதோ அவ்வளவுக்கே பதில் தருகிறோம்.",
     placeholder: "உங்கள் கேள்வியை இங்கே எழுதுங்கள்…",
     dictate: "பேசிக் கேளுங்கள்",
     listening: "கேட்டுக் கொண்டிருக்கிறது…",
     dictateUnavailable: "குரல் உள்ளீடு கிடைக்கவில்லை",
     dictateNote: "குரல் மூலம் வந்த உரையை அனுப்புவதற்கு முன் நீங்கள் திருத்தலாம்; அது தானாக அனுப்பப்படாது.",
-    seek: "அருளுரையை நாடுங்கள்",
-    consulting: "தெய்வத்தின் குரலில் பார்க்கிறோம்…",
-    qualityNote: "தரத்தை மேம்படுத்த கேள்விகளும் விருப்பத்தேர்வு பின்னூட்டமும் சேமிக்கப்படலாம். அவை ஒருபோதும் ஆதார நூலாக மாறாது.",
-    loading: "உங்கள் கேள்விக்கு பொருத்தமான உபதேசத்தைத் தேடுகிறோம்…",
+    seek: "ஆதாரத்தில் பார்க்க",
+    consulting: "ஆதாரங்களைப் பார்க்கிறோம்…",
+    qualityNote: "பீட்டா · ஆதாரங்களைச் சரிபார்க்க சில விநாடிகள் ஆகலாம். தரத்தை மேம்படுத்த கேள்விகளும் விருப்பத்தேர்வு பின்னூட்டமும் சேமிக்கப்படலாம்; அவை ஒருபோதும் ஆதார நூலாக மாறாது.",
+    loading: "சரிபார்க்கப்பட்ட தெய்வத்தின் குரல் தொகுதிகள் 1–7-ல் பார்க்கிறோம். பீட்டா பதிலுக்கு சில விநாடிகள் ஆகலாம்…",
     lookupErrorTitle: "இப்போது பதிலைத் தர முடியவில்லை.",
+    respectfulErrorTitle: "கேள்வியை மரியாதையுடன் மாற்றிக் கேளுங்கள்",
     emptyTitle: "இன்னும் கேள்வி கேட்கப்படவில்லை",
-    emptyText: "உபதேசம், அனுஷ்டானம், நூல், தர்மம் அல்லது சமய வழக்கம் பற்றி கேளுங்கள்.",
+    emptyText: "உபதேசம், அனுஷ்டானம், நூல், தர்மம், மனநிலை, குடும்ப வாழ்க்கை அல்லது சமய வழக்கம் பற்றி கேளுங்கள்.",
     evidenceSummary: "இந்தப் பதிலுக்கான உபதேச ஆதாரங்கள்",
-    notEnough: "இதற்கு நேரான ஆதாரம் இன்னும் இல்லை",
-    cannotAttribute: "இந்தக் கேள்விக்கு மஹாபெரியவா சொன்னதாக நேரடியாகப் பதில் கூற போதுமான ஆதாரம் இல்லை.",
+    notEnough: "சரிபார்க்கப்பட்ட ஆதாரங்களில் போதுமான நேரடி ஆதாரம் இல்லை",
+    cannotAttribute: "இந்தக் கேள்விக்கு மஹாபெரியவா சொன்னதாக பொறுப்புடன் நேரடியாகக் கூற முடியவில்லை.",
     qualified: "சில வரம்புகளுடன்",
     supported: "உபதேச ஆதாரத்துடன்",
     save: "சேமிக்க",
@@ -132,17 +178,42 @@ const copy = {
     sendReview: "மீளாய்வுக்கு அனுப்புங்கள்",
     explore: "தேடிப் பாருங்கள்",
     exploreTitle: "தலைப்புகளாகப் பார்க்கலாம்.",
-    exploreLead: "ஒரு தலைப்பைத் தேர்ந்தெடுங்கள். அதைப் பற்றிய கேள்விக்கு தெய்வத்தின் குரலில் இருந்து பதில் தேடப்படும்.",
+    exploreLead: "ஒரு தலைப்பைத் தேர்ந்தெடுங்கள். அதைப் பற்றிய கேள்விக்கு தெய்வத்தின் குரலில் இருந்து ஆதாரத்துடன் பதில் தேடப்படும்.",
     savedLabel: "சேமித்தவை",
     savedTitle: "நீங்கள் சேமித்த பதில்கள்.",
-    savedLead: "சேமித்த பதில்கள் இந்த உலாவியிலேயே இருக்கும்.",
+    savedLead: "கணக்கு தேவையில்லை. சேமித்த பதில்கள் இந்த உலாவி மற்றும் சாதனத்தில் மட்டுமே இருக்கும்; தளத் தரவை அழித்தாலோ சாதனம் மாறினாலோ அவை கிடைக்காது.",
     nothingSaved: "இன்னும் எதுவும் சேமிக்கப்படவில்லை",
     nothingSavedText: "பயனுள்ள பதிலைச் சேமித்தால் அது இங்கே தோன்றும்.",
     openAnswer: "பதிலைத் திறக்க →",
     trustTitle: "பதில் முதலில்; ஆதாரம் உடனே.",
-    trustText: "தெய்வத்தின் குரலில் கேள்விக்கு நேராகப் பொருந்தும் உபதேசம் இருந்தால் அதை எளிதாகப் புரியும்படி சொல்கிறோம். ஆதாரம் போதாத இடத்தில் மட்டும் அந்த வரம்பைத் தெளிவாகக் காட்டுகிறோம்.",
+    trustText: "சரிபார்க்கப்பட்ட ஏழு தொகுதிகளில் கேள்விக்கு பொருத்தமான உபதேசம் இருந்தால் அதை எளிதாகப் புரியும்படி சொல்கிறோம். நேரடி ஆதாரம் போதாத இடத்தில் அந்த வரம்பை ஊகமின்றி தெளிவாகக் காட்டுகிறோம்.",
     integrityTitle: "இந்தப் பதில்கள் எப்படி உருவாகின்றன?",
     integrityText: "பதிலின் கருத்து தெய்வத்தின் குரலில் உள்ள உபதேச ஆதாரத்திலிருந்து வருகிறது. வாசிக்க எளிதாகத் தொகுக்கப்படும் உரை, மஹாபெரியவாவின் சொற்சொறான மேற்கோளாகக் காட்டப்படாது.",
+    coverage: "7 சரிபார்க்கப்பட்ட தொகுதிகள்",
+    coverageDetail: "தெய்வத்தின் குரல்",
+    languageDetail: "தமிழ் + English",
+    evidenceDetail: "ஆதார வரம்புகள் வெளிப்படையாக",
+    inspire: "இன்னொரு கேள்வியைப் பாருங்கள்",
+    nextQuestion: "அடுத்த கேள்வி",
+    themeDark: "இருள்",
+    themeLight: "ஒளி",
+    onboardingTitle: "கேட்பதற்கு முன்",
+    onboardingBody: [
+      "இது ஆதார அடிப்படையிலான தேடல் அனுபவம்; பொதுவான சாட்பாட் அல்லது ஜோதிடத் தீர்ப்பளிப்பு அல்ல.",
+      "தற்போதைய ஆதார வரம்பு தெய்வத்தின் குரல் தொகுதிகள் 1–7. நேரடி ஆதாரம் இல்லையெனில் ஊகிக்காமல் அதையே தெளிவாகச் சொல்வோம்.",
+      "வாசிக்க எளிதாக உருவாக்கப்படும் உரை, வெளிப்படையாகச் சொல்லப்படாத வரை, ஸ்ரீ மஹாபெரியவாவின் சொற்சொறான மேற்கோள் அல்ல.",
+    ],
+    onboardingRespect: "நுணுக்கமான விஷயங்களையும் மரியாதையுடன் கேட்கலாம்.",
+    onboardingStart: "கேட்கத் தொடங்குங்கள்",
+    onboardingMore: "பிரமாணம் எப்படி செயல்படுகிறது?",
+    followupTitle: "ஒரு தொடர்க் கேள்வி கேளுங்கள்",
+    followupLead: "இந்தப் பதிலை ஒரு முறை மட்டும் மேலும் தெளிவுபடுத்தலாம். தொடர்க் கேள்வியும் ஆதாரங்களுடன் புதிதாகச் சரிபார்க்கப்படும்; இது திறந்த சாட் உரையாடல் அல்ல.",
+    followupPlaceholder: "உதாரணம்: நான் முதலில் தொடங்க வேண்டிய இரண்டு அனுஷ்டானங்கள் எவை?",
+    followupButton: "தொடர்க் கேள்வியைச் சரிபார்க்க",
+    followupLoading: "ஆதாரங்களை மீண்டும் பார்க்கிறோம்…",
+    followupContext: "இந்தக் கேள்வியின் ஒரே தொடர்ச்சி",
+    interpretation: "உங்கள் சொல்லை இவ்வாறு புரிந்துகொண்டோம்",
+    footerBeta: "சுயாதீன பீட்டா · ஆதார முன்னுரிமை · காஞ்சி மடத்தின் அதிகாரப்பூர்வ தளம் அல்ல",
     nav: { home: "முகப்பு", ask: "கேளுங்கள்", explore: "தேடல்", saved: "சேமித்தவை" },
     feedbackTags: {
       "wrong evidence": "தவறான ஆதாரம்",
@@ -152,10 +223,23 @@ const copy = {
       "should have abstained": "பதில் சொல்லாமல் இருந்திருக்க வேண்டும்",
     },
     examples: [
-      "சிவனும் விஷ்ணுவும் ஒன்றே என்று மஹாபெரியவா உபதேசித்திருக்கிறாரா?",
-      "சந்தியாவந்தனம் பற்றி மஹாபெரியவா என்ன சொல்லியிருக்கிறார்?",
-      "மாணவரின் கடமையும் கல்வியும் பற்றி மஹாபெரியவா என்ன சொல்லியிருக்கிறார்?",
+      "நித்ய கர்மாவுக்கு ஏன் முக்கியத்துவம் கொடுக்க வேண்டும்?",
+      "கோபத்தை கட்டுப்படுத்துவது பற்றி பெரியவா என்ன சொன்னார்?",
+      "மனம் அலைபாயும் போது ஒரு மாணவன் என்ன செய்ய வேண்டும்?",
       "பக்தியும் பிரார்த்தனையும் பற்றி மஹாபெரியவா என்ன சொல்லியிருக்கிறார்?",
+    ],
+    inspiration: [
+      "நித்ய கர்மாவுக்கு ஏன் முக்கியத்துவம் கொடுக்க வேண்டும்?",
+      "கோபத்தை கட்டுப்படுத்துவது பற்றி பெரியவா என்ன சொன்னார்?",
+      "மனம் அலைபாயும் போது ஒரு மாணவன் என்ன செய்ய வேண்டும்?",
+      "பயம் மற்றும் கவலை பற்றி உபதேசம் என்ன சொல்கிறது?",
+      "அன்றாட ஆன்மிக அனுஷ்டானத்தில் ஒழுக்கத்தை எப்படி வளர்ப்பது?",
+      "பிரார்த்தனையின் தொடர்ச்சி பற்றி பெரியவா என்ன சொன்னார்?",
+      "அன்றாட வாழ்க்கையில் தர்மம் என்றால் என்ன?",
+      "குழந்தைகளின் சம்ஸ்கார வளர்ச்சியில் பெற்றோரின் கடமை என்ன?",
+      "தமிழும் சமஸ்கிருதமும் பற்றி பெரியவா என்ன சொன்னார்?",
+      "உபநயன வயது பற்றி தெய்வத்தின் குரலில் என்ன வருகிறது?",
+      "திருமணம் பற்றி பெரியவா என்ன சொன்னார்?",
     ],
     topics: [
       ["பக்தியும் பிரார்த்தனையும்", "பக்தியும் பிரார்த்தனையும் பற்றி மஹாபெரியவா என்ன சொல்லியிருக்கிறார்?"],
@@ -179,13 +263,20 @@ const feedbackTags = [
 const state = {
   route: readRoute(),
   language: readLanguage(),
+  theme: readTheme(),
   question: "",
   answer: null,
   loading: false,
   error: null,
   feedback: null,
   feedbackMode: null,
+  showWelcome: localStorage.getItem(WELCOME_KEY) !== "seen",
+  inspirationIndex: 0,
+  followupLoading: false,
+  followupError: null,
 };
+
+let inspirationTimer = null;
 
 function t(key) {
   return copy[state.language][key];
@@ -205,15 +296,37 @@ function readLanguage() {
   return value === "ta" ? "ta" : "en";
 }
 
+function readTheme() {
+  const stored = localStorage.getItem(THEME_KEY);
+  if (stored === "dark" || stored === "light") return stored;
+  return window.matchMedia?.("(prefers-color-scheme: dark)")?.matches ? "dark" : "light";
+}
+
+function applyTheme(theme, persist = false) {
+  state.theme = theme;
+  document.documentElement.dataset.theme = theme;
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = theme === "dark" ? "#181715" : "#f7f4ee";
+  if (persist) localStorage.setItem(THEME_KEY, theme);
+}
+
+function toggleTheme() {
+  applyTheme(state.theme === "dark" ? "light" : "dark", true);
+  render();
+}
+
 function setLanguage(language) {
   if (!["en", "ta"].includes(language)) return;
   state.language = language;
+  state.inspirationIndex = 0;
   localStorage.setItem(LANGUAGE_KEY, language);
   document.documentElement.lang = language === "ta" ? "ta" : "en";
   state.answer = null;
   state.error = null;
   state.feedback = null;
   state.feedbackMode = null;
+  state.followupLoading = false;
+  state.followupError = null;
   render();
 }
 
@@ -254,6 +367,16 @@ function languageTabs() {
   `;
 }
 
+function themeToggle() {
+  const dark = state.theme === "dark";
+  return `
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="${escapeHtml(dark ? t("themeLight") : t("themeDark"))}">
+      <span aria-hidden="true">${dark ? "☀" : "☾"}</span>
+      <span>${escapeHtml(dark ? t("themeLight") : t("themeDark"))}</span>
+    </button>
+  `;
+}
+
 function composer() {
   return `
     <form class="composer" id="question-form">
@@ -267,6 +390,15 @@ function composer() {
       </div>
       <small class="dictation-note">${escapeHtml(t("dictateNote"))}</small>
     </form>
+  `;
+}
+
+function coverageStrip() {
+  return `
+    <section class="coverage-strip" aria-label="${escapeHtml(t("coverage"))}">
+      <div><strong>${escapeHtml(t("coverage"))}</strong><span>${escapeHtml(t("coverageDetail"))}</span></div>
+      <div><strong>${escapeHtml(t("languageDetail"))}</strong><span>${escapeHtml(t("evidenceDetail"))}</span></div>
+    </section>
   `;
 }
 
@@ -288,6 +420,7 @@ function homePage() {
         </div>
       </div>
     </section>
+    ${coverageStrip()}
     <section class="trust">
       <h2>${escapeHtml(t("trustTitle"))}</h2>
       <p>${escapeHtml(t("trustText"))}</p>
@@ -303,7 +436,7 @@ function askPage() {
   return `
     <section class="page-head ask-head">
       <div class="ask-head-copy">
-        <p class="eyebrow">${escapeHtml(t("askLabel"))}</p>
+        <p class="eyebrow">${escapeHtml(t("askLabel"))} · ${escapeHtml(t("beta"))}</p>
         <h1>${escapeHtml(t("askTitle"))}</h1>
         <p>${escapeHtml(t("askLead"))}</p>
       </div>
@@ -324,7 +457,10 @@ function loadingCard() {
 }
 
 function errorCard() {
-  return `<div class="card"><h2>${escapeHtml(t("lookupErrorTitle"))}</h2><p>${escapeHtml(state.error)}</p></div>`;
+  const title = /rephrase|மரியாதையுடன்/u.test(state.error || "")
+    ? t("respectfulErrorTitle")
+    : t("lookupErrorTitle");
+  return `<div class="card"><h2>${escapeHtml(title)}</h2><p>${escapeHtml(state.error)}</p></div>`;
 }
 
 function emptyCard() {
@@ -348,25 +484,65 @@ function teachingList(answer) {
   `;
 }
 
-function localizedAbstain(answer) {
+function abstainCopy(answer) {
+  if (answer.message || answer.corpusBoundary) {
+    return { message: answer.message || "", boundary: answer.corpusBoundary || "" };
+  }
   if (state.language === "ta") {
     return {
-      message: "நமக்குக் கிடைத்துள்ள உறுதிப்படுத்தப்பட்ட பதிவுகள் இந்தக் கேள்விக்கு நேரடி பதிலைச் சொல்லும் அளவுக்கு இப்போது போதவில்லை.",
-      boundary: "இது தற்போது சரிபார்க்கப்பட்டுள்ள தொகுப்பின் எல்லை மட்டுமே; மஹாபெரியவா இந்த விஷயத்தைப் பற்றி எப்போதும் பேசவில்லை என்ற முடிவு அல்ல.",
+      message: "தற்போது சரிபார்க்கப்பட்ட தெய்வத்தின் குரல் தொகுதிகள் 1–7-ல் இந்தக் கேள்விக்கு பொறுப்புடன் நேரடி பதில் கூற போதுமான, தெளிவான ஆதாரம் கிடைக்கவில்லை.",
+      boundary: "பிரமாணம் தற்போது தெய்வத்தின் குரல் தொகுதிகள் 1–7-இல் இருந்து சரிபார்க்கப்பட்ட உபதேச பதிவுகளைத் தேடுகிறது. இங்கு நேரடி பதில் கிடைக்காதது அந்த தற்போதைய ஆதாரத் தொகுப்பின் வரம்பைக் குறிக்கிறது; ஸ்ரீ மஹாபெரியவா இந்த விஷயத்தை வேறு இடத்தில் எப்போதும் பேசவில்லை என்ற பொருள் அல்ல.",
     };
   }
-  return { message: answer.message, boundary: answer.corpusBoundary };
+  return {
+    message: "We could not find sufficiently direct evidence in the seven currently verified volumes of Deivathin Kural (Voice of God) to answer this question responsibly.",
+    boundary: "Pramāṇa currently searches curated teaching records from Deivathin Kural Volumes 1–7. This result means the verified corpus did not establish a direct answer; it does not mean Sri Mahaperiyava never spoke about the subject elsewhere.",
+  };
+}
+
+function interpretationNote(answer) {
+  const corrections = answer?.interpretation?.corrections;
+  if (!Array.isArray(corrections) || !corrections.length) return "";
+  const changes = corrections
+    .map((item) => `“${escapeHtml(item.from)}” → “${escapeHtml(item.to)}”`)
+    .join(", ");
+  return `<p class="interpretation-note">${escapeHtml(t("interpretation"))}: ${changes}.</p>`;
+}
+
+function followupContext(answer) {
+  if (!answer?._followupParent) return "";
+  return `<p class="followup-context">${escapeHtml(t("followupContext"))}: “${escapeHtml(answer._followupParent)}”</p>`;
+}
+
+function followupBox(answer) {
+  if (answer.state === "abstain" || answer._followupDepth) return "";
+  return `
+    <section class="followup-box">
+      <strong>${escapeHtml(t("followupTitle"))}</strong>
+      <p>${escapeHtml(t("followupLead"))}</p>
+      <form id="followup-form">
+        <label class="sr-only" for="followup-question">${escapeHtml(t("followupTitle"))}</label>
+        <textarea id="followup-question" maxlength="800" rows="2" placeholder="${escapeHtml(t("followupPlaceholder"))}" ${state.followupLoading ? "disabled" : ""}></textarea>
+        <div class="followup-actions">
+          <span class="followup-status" aria-live="polite">${escapeHtml(state.followupError || (state.followupLoading ? t("followupLoading") : ""))}</span>
+          <button class="primary" type="submit" ${state.followupLoading ? "disabled" : ""}>${escapeHtml(t("followupButton"))}</button>
+        </div>
+      </form>
+    </section>
+  `;
 }
 
 function answerCard(answer) {
   if (answer.state === "abstain") {
-    const abstain = localizedAbstain(answer);
+    const abstain = abstainCopy(answer);
     return `
       <article class="card answer">
         <span class="pill">${escapeHtml(t("notEnough"))}</span>
         <h2>${escapeHtml(t("cannotAttribute"))}</h2>
-        <p class="prose">${escapeHtml(abstain.message || "")}</p>
-        <p class="muted">${escapeHtml(abstain.boundary || "")}</p>
+        ${interpretationNote(answer)}
+        ${followupContext(answer)}
+        <p class="prose">${escapeHtml(abstain.message)}</p>
+        <p class="muted">${escapeHtml(abstain.boundary)}</p>
         ${answerFooter(answer)}
       </article>
     `;
@@ -398,11 +574,14 @@ function answerCard(answer) {
         <span class="pill">${escapeHtml(answer.state === "qualified" ? t("qualified") : t("supported"))}</span>
         <button id="save-answer" ${isSaved ? "disabled" : ""}>${escapeHtml(isSaved ? t("saved") : t("save"))}</button>
       </div>
+      ${interpretationNote(answer)}
+      ${followupContext(answer)}
       ${boundary}
       <h2>${escapeHtml(answer.state === "qualified" ? t("guidanceQualified") : t("guidance"))}</h2>
       ${supportedText}
       ${application}
       ${teachingList(answer)}
+      ${followupBox(answer)}
       ${answerFooter(answer)}
     </article>
   `;
@@ -465,6 +644,7 @@ function savedPage() {
       <h1>${escapeHtml(t("savedTitle"))}</h1>
       <p>${escapeHtml(t("savedLead"))}</p>
     </section>
+    <p class="saved-storage-note">${escapeHtml(t("savedLead"))}</p>
     <div class="saved-list">
       ${items.length ? items.map((item) => `
         <article class="card saved-card">
@@ -487,9 +667,99 @@ function nav() {
   `;
 }
 
+function inspirationRail() {
+  if (!["home", "ask"].includes(state.route)) return "";
+  const prompts = t("inspiration");
+  const prompt = prompts[state.inspirationIndex % prompts.length];
+  return `
+    <aside class="inspiration-rail" aria-label="${escapeHtml(t("inspire"))}">
+      <span>${escapeHtml(t("inspire"))}</span>
+      <button type="button" class="inspiration-question" data-inspiration="${escapeHtml(prompt)}">${escapeHtml(prompt)}</button>
+      <button type="button" class="inspiration-next" id="inspiration-next" aria-label="${escapeHtml(t("nextQuestion"))}">↻</button>
+    </aside>
+  `;
+}
+
+function siteFooter() {
+  return `
+    <footer class="site-footer">
+      <div><strong>Pramāṇa</strong><span>${escapeHtml(t("footerBeta"))}</span></div>
+      <div class="footer-links">
+        <a href="/about.html">${state.language === "ta" ? "பற்றி" : "About"}</a>
+        <a href="/privacy.html">${state.language === "ta" ? "தனியுரிமை" : "Privacy"}</a>
+        <a href="/about.html#contact">${state.language === "ta" ? "தொடர்பு" : "Contact"}</a>
+      </div>
+    </footer>
+  `;
+}
+
+function welcomeOverlay() {
+  if (!state.showWelcome) return "";
+  return `
+    <div class="welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+      <div class="welcome-card">
+        <span class="beta-badge standalone">${escapeHtml(t("beta"))}</span>
+        <h2 id="welcome-title">${escapeHtml(t("onboardingTitle"))}</h2>
+        <ol>${t("onboardingBody").map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>
+        <p class="welcome-respect">${escapeHtml(t("onboardingRespect"))}</p>
+        <div class="welcome-actions">
+          <button type="button" class="secondary" id="welcome-more">${escapeHtml(t("onboardingMore"))}</button>
+          <button type="button" class="primary" id="welcome-start">${escapeHtml(t("onboardingStart"))}</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function advanceInspiration() {
+  const prompts = t("inspiration");
+  state.inspirationIndex = (state.inspirationIndex + 1) % prompts.length;
+  const button = app.querySelector(".inspiration-question");
+  if (button) {
+    const prompt = prompts[state.inspirationIndex];
+    button.textContent = prompt;
+    button.dataset.inspiration = prompt;
+  }
+}
+
+function manageInspirationTimer() {
+  clearInterval(inspirationTimer);
+  inspirationTimer = null;
+  if (!["home", "ask"].includes(state.route)) return;
+  inspirationTimer = setInterval(() => {
+    if (document.hidden) return;
+    advanceInspiration();
+  }, 8000);
+}
+
+function usePrompt(prompt) {
+  state.question = prompt;
+  state.answer = null;
+  state.error = null;
+  state.feedback = null;
+  state.feedbackMode = null;
+  state.followupLoading = false;
+  state.followupError = null;
+  if (state.route === "ask") {
+    render();
+    queueMicrotask(() => app.querySelector("#question")?.focus());
+  } else {
+    go("ask");
+  }
+}
+
+function closeWelcome() {
+  localStorage.setItem(WELCOME_KEY, "seen");
+  state.showWelcome = false;
+  render();
+}
+
 function render() {
   state.route = readRoute();
   document.documentElement.lang = state.language === "ta" ? "ta" : "en";
+  document.documentElement.dataset.theme = state.theme;
+  document.title = `${t("brandTitle")} · Pramāṇa`;
+
   const page = state.route === "ask" ? askPage()
     : state.route === "explore" ? explorePage()
     : state.route === "saved" ? savedPage()
@@ -497,11 +767,21 @@ function render() {
 
   app.innerHTML = `
     <header>
-      <button class="brand" data-route="home"><span class="mark"><img src="/assets/mahaperiyava-mark.webp" alt="" aria-hidden="true"></span><span><b>ஸ்ரீ மஹாபெரியவா அருளுரை</b><small>${escapeHtml(t("brandSub"))}</small></span></button>
-      ${languageTabs()}
+      <button class="brand" data-route="home">
+        <span class="mark"><img src="/assets/mahaperiyava-mark.webp" alt="" aria-hidden="true"></span>
+        <span><b>${escapeHtml(t("brandTitle"))}</b><small>${escapeHtml(t("brandSub"))}</small></span>
+        <span class="beta-badge">${escapeHtml(t("beta"))}</span>
+      </button>
+      <div class="header-tools">
+        ${languageTabs()}
+        ${themeToggle()}
+      </div>
     </header>
     <main>${page}</main>
+    ${inspirationRail()}
+    ${siteFooter()}
     ${nav()}
+    ${welcomeOverlay()}
   `;
 
   app.querySelectorAll("[data-language]").forEach((button) => {
@@ -513,15 +793,19 @@ function render() {
   });
 
   app.querySelectorAll("[data-prompt]").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.question = button.dataset.prompt;
-      state.answer = null;
-      state.error = null;
-      state.feedback = null;
-      state.feedbackMode = null;
-      go("ask");
-    });
+    button.addEventListener("click", () => usePrompt(button.dataset.prompt));
   });
+
+  const inspirationButton = app.querySelector("[data-inspiration]");
+  if (inspirationButton) {
+    inspirationButton.addEventListener("click", () => usePrompt(inspirationButton.dataset.inspiration));
+  }
+
+  const inspirationNext = app.querySelector("#inspiration-next");
+  if (inspirationNext) inspirationNext.addEventListener("click", advanceInspiration);
+
+  const themeButton = app.querySelector("#theme-toggle");
+  if (themeButton) themeButton.addEventListener("click", toggleTheme);
 
   const form = app.querySelector("#question-form");
   const field = app.querySelector("#question");
@@ -555,6 +839,9 @@ function render() {
     });
   }
 
+  const followupForm = app.querySelector("#followup-form");
+  if (followupForm) followupForm.addEventListener("submit", submitFollowup);
+
   app.querySelectorAll("[data-reopen]").forEach((button) => {
     button.addEventListener("click", () => {
       const item = savedItems().find(
@@ -564,9 +851,24 @@ function render() {
       state.question = item.question;
       state.answer = item;
       state.error = null;
+      state.followupLoading = false;
+      state.followupError = null;
       go("ask");
     });
   });
+
+  const welcomeStart = app.querySelector("#welcome-start");
+  if (welcomeStart) welcomeStart.addEventListener("click", closeWelcome);
+  const welcomeMore = app.querySelector("#welcome-more");
+  if (welcomeMore) {
+    welcomeMore.addEventListener("click", () => {
+      localStorage.setItem(WELCOME_KEY, "seen");
+      state.showWelcome = false;
+      location.href = "/about.html";
+    });
+  }
+
+  manageInspirationTimer();
 }
 
 async function submitQuestion(event) {
@@ -579,6 +881,8 @@ async function submitQuestion(event) {
   state.answer = null;
   state.feedback = null;
   state.feedbackMode = null;
+  state.followupLoading = false;
+  state.followupError = null;
   history.replaceState(null, "", "#ask");
   render();
 
@@ -600,6 +904,55 @@ async function submitQuestion(event) {
     state.loading = false;
     render();
     scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
+
+async function submitFollowup(event) {
+  event.preventDefault();
+  if (!state.answer || state.answer.state === "abstain" || state.answer._followupDepth || state.followupLoading) {
+    return;
+  }
+
+  const input = app.querySelector("#followup-question");
+  const followup = input?.value?.trim() || "";
+  if (!followup) return;
+
+  const parentQuestion = state.answer.question || state.question;
+  const contextualQuestion = `Earlier question: ${parentQuestion}\nFollow-up question: ${followup}`;
+
+  state.followupLoading = true;
+  state.followupError = null;
+  render();
+
+  try {
+    const response = await fetch("/api/answer", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        question: contextualQuestion,
+        responseLanguage: responseLanguageFor(followup),
+      }),
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload.error || "The evidence lookup could not be completed.");
+
+    payload._followupDepth = 1;
+    payload._followupParent = parentQuestion;
+    payload._followupQuestion = followup;
+    payload.question = followup;
+
+    state.question = followup;
+    state.answer = payload;
+    state.error = null;
+    state.feedback = null;
+    state.feedbackMode = null;
+    state.followupError = null;
+  } catch (error) {
+    state.followupError = error.message;
+  } finally {
+    state.followupLoading = false;
+    render();
+    if (!state.followupError) scrollTo({ top: 0, behavior: "smooth" });
   }
 }
 
@@ -680,5 +1033,7 @@ function startDictation() {
   recognition.start();
 }
 
+applyTheme(state.theme, false);
 addEventListener("hashchange", render);
+addEventListener("beforeunload", () => clearInterval(inspirationTimer));
 render();

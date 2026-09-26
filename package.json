@@ -8,7 +8,7 @@
     "start": "node server.mjs",
     "test": "node --test",
     "smoke": "node scripts/smoke-backend.mjs",
-    "check": "node --check server.mjs && node --check public/app.js && node --check public/enhancements.js && node --check lib/public-answer.mjs && node --check netlify/lib/proxy.mjs && node --check netlify/functions/answer.mjs && node --check netlify/functions/feedback.mjs && node --check netlify/functions/health.mjs"
+    "check": "node --check server.mjs && node --check public/app.js && node --check public/info-theme.js && node --check lib/public-answer.mjs && node --check netlify/lib/proxy.mjs && node --check netlify/functions/answer.mjs && node --check netlify/functions/feedback.mjs && node --check netlify/functions/health.mjs"
   },
   "engines": {
     "node": ">=22"

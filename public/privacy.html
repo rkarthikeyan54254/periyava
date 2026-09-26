@@ -9,13 +9,7 @@
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/enhancements.css" />
     <title>Privacy · Ask Mahaperiyava</title>
-    <script>
-      (() => {
-        const saved = localStorage.getItem("ask-mahaperiyava:theme:v1");
-        const theme = saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-        document.documentElement.dataset.theme = theme;
-      })();
-    </script>
+    <script defer src="/info-theme.js"></script>
   </head>
   <body>
     <main class="info-page">
@@ -24,6 +18,7 @@
           <img src="/assets/mahaperiyava-mark.webp" alt="" />
           <span><strong>Ask Mahaperiyava</strong><br><small>Pramāṇa · evidence-first devotional research</small></span>
         </a>
+        <button class="theme-toggle" id="info-theme-toggle" type="button" aria-label="Use dark mode"><span data-theme-icon aria-hidden="true">☾</span><span data-theme-label>Dark</span></button>
       </header>
 
       <article>
