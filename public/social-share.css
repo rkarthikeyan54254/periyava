@@ -1,0 +1,21 @@
+.share-answer {
+  white-space: nowrap;
+}
+
+.social-share-status {
+  align-self: center;
+  color: var(--muted, #6f675d);
+  font-size: 0.82rem;
+  line-height: 1.3;
+  min-height: 1em;
+}
+
+@media (max-width: 560px) {
+  .answer-top {
+    flex-wrap: wrap;
+  }
+
+  .social-share-status {
+    flex-basis: 100%;
+  }
+}
