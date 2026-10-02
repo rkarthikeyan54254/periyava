@@ -6,8 +6,8 @@ const analytics = await readFile(new URL("../public/analytics.js", import.meta.u
 const index = await readFile(new URL("../public/index.html", import.meta.url), "utf8");
 const privacy = await readFile(new URL("../public/privacy.html", import.meta.url), "utf8");
 
-test("analytics stays dormant without a configured GA4 measurement id", () => {
-  assert.match(index, /name="askperiyava-ga4-id" content=""/);
+test("analytics is activated with the configured GA4 measurement id", () => {
+  assert.match(index, /name="askperiyava-ga4-id" content="G-0C0QKF244Z"/);
   assert.match(analytics, /enabled=\/\^G-/);
   assert.match(index, /\/analytics\.js/);
 });
