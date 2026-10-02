@@ -1,0 +1,83 @@
+.composer {
+  position: relative;
+}
+
+.composer::before {
+  content: "🎙 Prefer speaking? Tap Dictate and ask in your own words.";
+  display: block;
+  margin: 7px 11px 0;
+  padding: 9px 12px;
+  border-radius: 14px;
+  background: rgba(115,63,60,.07);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+html[lang="ta"] .composer::before {
+  content: "🎙 பேசுவது சுலபமா? ‘பேசிக் கேளுங்கள்’ என்பதைத் தட்டி உங்கள் கேள்வியைச் சொல்லுங்கள்.";
+}
+
+.composer-actions {
+  align-items: stretch;
+}
+
+.dictate {
+  min-height: 45px;
+  padding: 0 16px;
+  border: 1px solid rgba(115,63,60,.28);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 5px 16px rgba(115,63,60,.08);
+}
+
+.dictate::before {
+  content: "🎙";
+  display: inline-block;
+  margin-right: 7px;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.dictate:hover:not(:disabled) {
+  background: rgba(115,63,60,.14);
+  border-color: rgba(115,63,60,.4);
+}
+
+.dictate:focus-visible {
+  outline: 3px solid rgba(115,63,60,.3);
+  outline-offset: 2px;
+}
+
+.dictation-note {
+  padding: 7px 13px 11px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+@media (max-width: 560px) {
+  .composer::before {
+    margin: 6px 7px 0;
+    font-size: 11.5px;
+  }
+
+  .composer-actions {
+    gap: 8px;
+  }
+
+  .dictate,
+  .composer-actions .primary {
+    flex: 1 1 0;
+    min-height: 48px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .dictate {
+    font-size: 12.5px;
+  }
+}
