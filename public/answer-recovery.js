@@ -37,10 +37,18 @@ globalThis.fetch=async function recoveredFetch(input,init){
 
   const retryDelays=delays();
   let lastError=null;
+  let tamilRecoveryAttempted=false;
 
   for(let attempt=0;attempt<=retryDelays.length;attempt+=1){
     try{
       const response=await nativeFetch(input,init);
+      if(response.status===503){
+        const payload=await response.clone().json().catch(()=>null);
+        if(payload?.code==="tamil_answer_unavailable"){
+          if(tamilRecoveryAttempted||attempt===retryDelays.length)return response;
+          tamilRecoveryAttempted=true;
+        }
+      }
       if(!retryableStatus.has(response.status)||attempt===retryDelays.length){
         return response;
       }
