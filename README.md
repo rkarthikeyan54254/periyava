@@ -38,6 +38,17 @@ npm run check
 npm test
 ```
 
+Before releasing changes to suggested questions or the answer service, run
+`npm run check:prompts` against the intended deployed API. This checks every
+example, rotating suggestion, and topic question in both languages, requiring
+a usable answer and a source reference. An abstention fails this product check;
+the check never changes the backend's evidence decision. Requests are spaced
+30 seconds apart and the run stops on rate limiting.
+
+Set `PROMOTED_QUESTION_API_BASE` for a deploy preview, or
+`PROMOTED_QUESTION_LANGUAGE=ta` to check only Tamil. `PROMOTED_QUESTION` selects
+one exact question for a focused regression check.
+
 For a live backend smoke test, configure:
 
 - `PRAMANA_API_BASE_URL`
