@@ -41,7 +41,6 @@ for (const lang of language ? [language] : ["ta", "en"]) {
       else if (lang === "ta" && answer.answerText &&
         (!/[\u0B80-\u0BFF]/u.test(answer.answerText) || /\b[A-Za-z]{2,}\b/u.test(answer.answerText))) failure = "Answer is not Tamil";
       console.log(JSON.stringify({ language: lang, question, passed: !failure, state: answer?.state, failure }));
-      if (response.status === 429) break;
     } catch (error) {
       failure = error.message;
       console.log(JSON.stringify({ language: lang, question, passed: false, failure }));
