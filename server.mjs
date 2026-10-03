@@ -130,7 +130,14 @@ async function answer(req, res) {
     });
   }
 
-  return json(res, 200, toPublicAnswer(packet));
+  const publicAnswer = toPublicAnswer(packet, { responseLanguage });
+  if (publicAnswer.answerUnavailable) {
+    return json(res, 503, {
+      code: "tamil_answer_unavailable",
+      error: "தமிழில் பதிலைத் தயாரிக்க முடியவில்லை. சிறிது நேரம் கழித்து மீண்டும் முயற்சிக்கவும்.",
+    });
+  }
+  return json(res, 200, publicAnswer);
 }
 
 async function feedback(req, res) {

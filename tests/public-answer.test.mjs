@@ -152,8 +152,8 @@ test("Tamil question never leaks an English deterministic fallback", () => {
   });
 
   assert.equal(out.state, "supported");
-  assert.match(out.answerText, /தமிழில்/);
-  assert.equal(/\bThe\b/.test(out.answerText), false);
+  assert.equal(out.answerText, null);
+  assert.equal(out.answerUnavailable, true);
   assert.deepEqual(out.teachings, []);
   assert.match(out.trustNote, /ஆவணப்படுத்தப்பட்ட/);
 });
@@ -180,6 +180,7 @@ test("Tamil deterministic fallback is preserved when it is source-bound", () => 
   });
 
   assert.equal(out.answerText, tamil);
+  assert.equal(out.answerUnavailable, false);
   assert.equal(/\b[A-Za-z]{2,}\b/.test(out.answerText), false);
 });
 
